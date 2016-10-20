@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test</title>
+	</head>
+	<body>
+		<script src="js/audio.js"></script>
+		<script>
+			var Freq = 440
+			var Time = 0
+
+			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
+				for (var i = 0; i < NumSamples; i++) {
+					var Sample = Math.sin(2 * Math.PI * Time)
+					Time += Freq / SampleRate
+					OutputL[i] = Sample
+					OutputR[i] = Sample
+				}
+			}
+
+			StartAudio(OnProcess)
+		</script>
+	</body>
+</html>
