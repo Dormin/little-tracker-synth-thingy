@@ -5,17 +5,13 @@
 	</head>
 	<body>
 		<script src="js/audio.js"></script>
+		<script src="js/synth.js"></script>
 		<script>
-			var Freq = 440
-			var Time = 0
+			var NumSynths = 1
+			InitSynths(NumSynths)
 
 			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
-				for (var i = 0; i < NumSamples; i++) {
-					var Sample = Math.sin(2 * Math.PI * Time)
-					Time += Freq / SampleRate
-					OutputL[i] = Sample
-					OutputR[i] = Sample
-				}
+				ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
 			}
 
 			StartAudio(OnProcess)
