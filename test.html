@@ -8,24 +8,50 @@
 		<script src="js/input.js"></script>
 		<script src="js/synth.js"></script>
 		<script>
+			var KeyToNoteMap = {
+				65: -9, // A: C
+				87: -8, // W: C#
+				83: -7, // S: D
+				69: -6, // E: D#
+				68: -5, // D: E
+				70: -4, // F: F
+				84: -3, // T: F#
+				71: -2, // G: G
+				89: -1, // Y: G#
+				72: 0, // H: A
+				85: 1, // U: A#
+				74: 2, // J: B
+				75: 2, // K: C
+				79: 2, // O: C#
+				76: 2, // L: D
+			}
 			var NumSynths = 1
-			var KeyA = 65
+			var CurrKey = 0
 
 			InitSynths(NumSynths)
 			InitInput()
+			StartAudio(OnProcess)
 
 			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
-				if (KeyIsHeld(KeyA)) {
-					ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
-				} else {
-					for (var i = 0; i < NumSamples; i++) {
-						OutputL[i] = 0
-						OutputR[i] = 0
-					}
-				}
+				HandleKeyboard()
+				ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
 			}
 
-			StartAudio(OnProcess)
+			function HandleKeyboard() {
+				for (var Key in KeyToNoteMap) {
+					if (KeyWasPressed(Key)) {
+						var Note = KeyToNoteMap[Key]
+						SynthNoteOn(0, Note)
+						CurrKey = Key 
+					}
+				}
+
+				if (KeyWasReleased(CurrKey)) {
+					SynthNoteOff(0)
+					CurrKey = 0
+				}
+			}
+			
 		</script>
 	</body>
 </html>
