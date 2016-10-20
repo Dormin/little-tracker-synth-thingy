@@ -5,13 +5,24 @@
 	</head>
 	<body>
 		<script src="js/audio.js"></script>
+		<script src="js/input.js"></script>
 		<script src="js/synth.js"></script>
 		<script>
 			var NumSynths = 1
+			var KeyA = 65
+
 			InitSynths(NumSynths)
+			InitInput()
 
 			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
-				ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
+				if (KeyIsHeld(KeyA)) {
+					ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
+				} else {
+					for (var i = 0; i < NumSamples; i++) {
+						OutputL[i] = 0
+						OutputR[i] = 0
+					}
+				}
 			}
 
 			StartAudio(OnProcess)
