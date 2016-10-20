@@ -1,10 +1,10 @@
 "use strict"
 
-var SynthStates = []
+var Synths = []
 
 function InitSynths(NumSynths) {
 	for (var i = 0; i < NumSynths; i++) {
-		SynthStates[i] = {
+		Synths[i] = {
 			Freq: 440,
 			Time: 0
 		}
@@ -12,9 +12,9 @@ function InitSynths(NumSynths) {
 }
 
 function ProcessSynth(Index, OutputL, OutputR, NumSamples, SampleRate) {
-	var State = SynthStates[Index]
-	var Freq = State.Freq
-	var Time = State.Time
+	var Synth = Synths[Index]
+	var Freq = Synth.Freq
+	var Time = Synth.Time
 
 	for (var i = 0; i < NumSamples; i++) {
 		var Sample = Math.sin(2 * Math.PI * Time)
@@ -23,5 +23,5 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples, SampleRate) {
 		OutputR[i] = Sample
 	}
 
-	State.Time = Time
+	Synth.Time = Time
 }
