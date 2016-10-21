@@ -4,7 +4,9 @@
 		<title>Test</title>
 	</head>
 	<body>
+		<canvas id="view" width="640" height="480" style="display:block;margin:auto"></canvas>
 		<script src="js/audio.js"></script>
+		<script src="js/canvas.js"></script>
 		<script src="js/input.js"></script>
 		<script src="js/synth.js"></script>
 		<script>
@@ -30,6 +32,11 @@
 
 			InitSynths(NumSynths)
 			InitInput()
+			InitCanvas("view")
+
+			SetColor(128, 128, 128)
+			DrawRect(0, 0, Canvas.Width, Canvas.Height)
+
 			StartAudio(OnProcess)
 
 			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
