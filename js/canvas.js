@@ -1,6 +1,11 @@
 "use strict"
 
-var Canvas = {}
+var Canvas = {
+	Width: 0,
+	Height: 0,
+	Context: null,
+	Images: []
+}
 
 function InitCanvas(ElementId) {
 	var Element = document.getElementById(ElementId)
@@ -10,10 +15,24 @@ function InitCanvas(ElementId) {
 	Canvas.Context = Context
 }
 
+function LoadImage(Src) {
+	var Id = Canvas.Images.length
+	Canvas.Images[Id] = new Image()
+	Canvas.Images[Id].src = Src
+	return Id
+}
+
 function SetColor(R, G, B) {
 	Canvas.Context.fillStyle = "rgb(" + R + "," + G + "," + B + ")"
 }
 
 function DrawRect(X, Y, Width, Height) {
 	Canvas.Context.fillRect(X, Y, Width, Height)
+}
+
+function DrawImage(Id, Dx, Dy, Sx, Sy, Width, Height) {
+	var Image = Canvas.Images[Id]
+	if (Image) {
+		Canvas.Context.drawImage(Image, Sx, Sy, Width, Height, Dx, Dy, Width, Height);
+	}
 }
