@@ -27,7 +27,7 @@
 				79: 4, // O: C#
 				76: 5, // L: D
 			}
-			var NumSynths = 1
+			var NumSynths = 3
 			var CurrKey = 0
 
 			InitSynths(NumSynths)
@@ -41,7 +41,8 @@
 
 			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
 				HandleKeyboard()
-				ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
+				//ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
+				ProcessSynths([0,1,2], OutputL, OutputR, NumSamples, SampleRate)
 			}
 
 			function HandleKeyboard() {
@@ -49,12 +50,16 @@
 					if (KeyWasPressed(Key)) {
 						var Note = KeyToNoteMap[Key]
 						SynthNoteOn(0, Note)
+						SynthNoteOn(1, Note+4)
+						SynthNoteOn(2, Note+7)
 						CurrKey = Key 
 					}
 				}
 
 				if (KeyWasReleased(CurrKey)) {
 					SynthNoteOff(0)
+					SynthNoteOff(1)
+					SynthNoteOff(2)
 					CurrKey = 0
 				}
 			}

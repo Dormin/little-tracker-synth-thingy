@@ -38,3 +38,24 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples, SampleRate) {
 
 	Synth.Time = Time
 }
+
+function ProcessSynths(Indices, OutputL, OutputR, NumSamples, SampleRate) {
+	for (var i = 0; i < NumSamples; i++) {
+		var avgWeight = 1;
+		OutputL[i] = OutputL[i] = 0;
+		for (var Index in Indices){
+			var Synth = Synths[Index]
+			var Gate = Synth.Gate
+			var Freq = Synth.Freq
+			var Time = Synth.Time
+			
+			var Sample = Gate * Math.sin(2 * Math.PI * Time) / avgWeight
+			avgWeight += Gate
+			Time += Freq / SampleRate
+			OutputL[i] += Sample
+			OutputR[i] += Sample
+
+			Synth.Time = Time
+		}
+	}
+}
