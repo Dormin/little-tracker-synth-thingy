@@ -6,7 +6,7 @@ function InitSynths(NumSynths) {
 	for (var i = 0; i < NumSynths; i++) {
 		Synths[i] = {
 			Gate: 0,
-			Freq: 440,
+			Freq: 0,
 			Time: 0
 		}
 	}
@@ -15,6 +15,7 @@ function InitSynths(NumSynths) {
 function SynthNoteOn(Index, Note) {
 	var Synth = Synths[Index]
 	Synth.Gate = 1
+	Synth.Freq = 440 * Math.pow(2, Note / 12)
 }
 
 function SynthNoteOff(Index) {
