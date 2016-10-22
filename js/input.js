@@ -61,5 +61,12 @@ function KeyCodeToString(KeyCode) {
 		return String.fromCharCode(KeyCode)
 	}
 
+	switch (KeyCode) {
+		case 37: return "Left"
+		case 38: return "Up"
+		case 39: return "Right"
+		case 40: return "Down"
+	}
+
 	return ""
 }
