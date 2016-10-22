@@ -68,6 +68,8 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 
 function DrawTracker() {
 	var NumTracks = Tracker.NumTracks
+	var CursorRow = Tracker.CursorRow
+	var CursorCol = Tracker.CursorCol
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 	var Rows = Pattern.Rows
@@ -80,11 +82,11 @@ function DrawTracker() {
 		var X = Font.Width
 
 		if (i % 16 === 0) {
-			SetColor(80, 80, 80)
+			SetColor(71, 83, 108)
 		} else if (i % 4 === 0) {
-			SetColor(72, 72, 72)
+			SetColor(63, 70, 90)
 		} else {
-			SetColor(64, 64, 64)
+			SetColor(54, 57, 73)
 		}
 
 		DrawRect(0, Y, Canvas.Width, Font.Height)
@@ -94,6 +96,12 @@ function DrawTracker() {
 		for (var j = 0; j < NumTracks; j++) {
 			var Cell = Row[j]
 			var Char = 45
+
+			if (i === CursorRow && j === CursorCol) {
+				SetColor(240, 16, 32)
+				DrawRect(X, Y, 3 * Font.Width, Font.Height)
+			}
+
 			DrawChar(Char, X, Y)
 			X += Font.Width
 			DrawChar(Char, X, Y)
