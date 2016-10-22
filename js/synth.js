@@ -15,7 +15,7 @@ function InitSynths(NumSynths) {
 function SynthNoteOn(Index, Note) {
 	var Synth = Synths[Index]
 	Synth.Gate = 1
-	Synth.Freq = 440 * Math.pow(2, Note / 12)
+	Synth.Freq = 440 * Math.pow(2, (Note - 57) / 12)
 }
 
 function SynthNoteOff(Index) {

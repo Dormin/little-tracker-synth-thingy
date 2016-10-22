@@ -13,26 +13,6 @@
 		<script src="js/synth.js"></script>
 		<script src="js/tracker.js"></script>
 		<script>
-			var KeyToNoteMap = {
-				"A": -9, // C
-				"W": -8, // C#
-				"S": -7, // D
-				"E": -6, // D#
-				"D": -5, // E
-				"F": -4, // F
-				"T": -3, // F#
-				"G": -2, // G
-				"Y": -1, // G#
-				"H": 0, // A
-				"U": 1, // A#
-				"J": 2, // B
-				"K": 3, // C
-				"O": 4, // C#
-				"L": 5, // D
-			}
-			var NumSynths = 1
-			var CurrKey = ""
-
 			InitSynths(Tracker.NumTracks)
 			InitInput()
 			InitCanvas("view")
@@ -43,27 +23,10 @@
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
 				UpdateInput()
-				HandleKeyboard()
 				ProcessTracker(OutputL, OutputR, NumSamples)
 			}
 
-			function HandleKeyboard() {
-				for (var Key in KeyToNoteMap) {
-					if (KeyWasPressed(Key)) {
-						var Note = KeyToNoteMap[Key]
-						SynthNoteOn(0, Note)
-						CurrKey = Key
-						//DrawNote(Note, 4 * 6, 0)
-					}
-				}
-
-				if (KeyWasReleased(CurrKey)) {
-					SynthNoteOff(0)
-					CurrKey = 0
-				}
-			}
-
-			function DrawNote(Note, X, Y) {
+			/*function DrawNote(Note, X, Y) {
 				var Octave = ((Note + 9) / 12 | 0) + 4
 				Note = (Note % 12 + 12) % 12
 				var NoteChar = [65, 65, 66, 67, 67, 68, 68, 69, 70, 70, 71, 71][Note]
@@ -74,7 +37,7 @@
 				DrawChar(NoteChar, X, Y)
 				DrawChar(SharpChar, X + 6, Y)
 				DrawChar(OctaveChar, X + 12, Y)
-			}
+			}*/
 
 		</script>
 	</body>

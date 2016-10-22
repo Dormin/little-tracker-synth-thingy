@@ -1,11 +1,31 @@
 "use strict"
 
 var Tracker = {
+	KeyToNoteMap: {
+		"A": 0, // C
+		"W": 1, // C#
+		"S": 2, // D
+		"E": 3, // D#
+		"D": 4, // E
+		"F": 5, // F
+		"T": 6, // F#
+		"G": 7, // G
+		"Y": 8, // G#
+		"H": 9, // A
+		"U": 10, // A#
+		"J": 11, // B
+		"K": 12, // C
+		"O": 13, // C#
+		"L": 14, // D
+		"P": 15 // D#
+	},
 	NumTracks: 4,
 	NumPatterns: 16,
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
+	CurrentOctave: 4,
+	CurrentKey: null,
 	NumVisibleRows: 0,
 	ScrollMargin: 4,
 	ScrollOffset: 0,
@@ -75,25 +95,51 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 }
 
 function HandleTrackerInput() {
+	var KeyToNoteMap = Tracker.KeyToNoteMap
 	var NumTracks = Tracker.NumTracks
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 
-	if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
-		Tracker.CursorCol--
-		Tracker.NeedsToRedraw = true
+	for (var Key in KeyToNoteMap) {
+		if (KeyToNoteMap.hasOwnProperty(Key)) {
+			if (KeyIsRepeating(Key)) {
+				var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
+				var Row = Pattern.Rows[Tracker.CursorRow]
+				var Cell = Row[Tracker.CursorCol]
+				Cell.Note = Note
+				SynthNoteOn(Tracker.CursorCol, Note)
+				Tracker.CurrentKey = Key
+				if (Tracker.CursorRow < NumRows - 1) {
+					Tracker.CursorRow++
+				}
+				Tracker.NeedsToRedraw = true
+			}
+		}
+		if (Tracker.CurrentKey !== null && KeyWasReleased(Tracker.CurrentKey)) {
+			Tracker.CurrentKey = null
+			for (var i = 0; i < Tracker.NumTracks; i++) {
+				SynthNoteOff(i)
+			}
+		}
 	}
-	if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
-		Tracker.CursorCol++
-		Tracker.NeedsToRedraw = true
-	}
-	if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
-		Tracker.CursorRow--
-		Tracker.NeedsToRedraw = true
-	}
-	if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
-		Tracker.CursorRow++
-		Tracker.NeedsToRedraw = true
+
+	if (Tracker.CurrentKey === null) {
+		if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
+			Tracker.CursorCol--
+			Tracker.NeedsToRedraw = true
+		}
+		if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
+			Tracker.CursorCol++
+			Tracker.NeedsToRedraw = true
+		}
+		if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
+			Tracker.CursorRow--
+			Tracker.NeedsToRedraw = true
+		}
+		if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
+			Tracker.CursorRow++
+			Tracker.NeedsToRedraw = true
+		}
 	}
 }
 
@@ -116,6 +162,7 @@ function DrawTracker() {
 	var NumTracks = Tracker.NumTracks
 	var CursorRow = Tracker.CursorRow
 	var CursorCol = Tracker.CursorCol
+	var NumVisibleRows = Tracker.NumVisibleRows
 	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
@@ -125,7 +172,7 @@ function DrawTracker() {
 	SetColor(54, 57, 73)
 	DrawRect(0, 0, Canvas.Width, Canvas.Height)
 
-	for (var i = ScrollOffset; i < NumRows; i++) {
+	for (var i = ScrollOffset; i < ScrollOffset + NumRows && i < NumRows; i++) {
 		if (i >= 0) {
 			var Row = Rows[i]
 			var X = Font.Width
