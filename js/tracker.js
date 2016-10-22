@@ -6,8 +6,9 @@ var Tracker = {
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
+	NeedsToRedraw: true,
 	Tracks: [],
-	Patterns: [],
+	Patterns: []
 }
 
 function InitTracker() {
@@ -58,5 +59,61 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 			OutputL[j] += BufferL[j] / NumTracks
 			OutputR[j] += BufferR[j] / NumTracks
 		}
+	}
+
+	if (Tracker.NeedsToRedraw) {
+		DrawTracker()
+	}
+}
+
+function DrawTracker() {
+	var NumTracks = Tracker.NumTracks
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var NumRows = Pattern.NumRows
+	var Rows = Pattern.Rows
+	var Y = 0
+	
+	DrawRect(0, 0, Canvas.Width, Canvas.Height)
+
+	for (var i = 0; i < NumRows; i++) {
+		var Row = Rows[i]
+		var X = Font.Width
+
+		if (i % 16 === 0) {
+			SetColor(80, 80, 80)
+		} else if (i % 4 === 0) {
+			SetColor(72, 72, 72)
+		} else {
+			SetColor(64, 64, 64)
+		}
+
+		DrawRect(0, Y, Canvas.Width, Font.Height)
+		DrawNumber(i, 2, X, Y)
+		X += 3 * Font.Width
+
+		for (var j = 0; j < NumTracks; j++) {
+			var Cell = Row[j]
+			var Char = 45
+			DrawChar(Char, X, Y)
+			X += Font.Width
+			DrawChar(Char, X, Y)
+			X += Font.Width
+			DrawChar(Char, X, Y)
+			X += 4 * Font.Width
+		}
+
+		Y += Font.Height
+	}
+
+	Tracker.NeedsToRedraw = false
+}
+
+function DrawNumber(Number, NumDigits, X, Y) {
+	X += NumDigits * Font.Width
+	for (var i = 0; i < NumDigits; i++) {
+		var Char = Number % 10 + 48
+		X -= Font.Width
+		DrawChar(Char, X, Y)
+		Number = Number / 10 | 0
 	}
 }
