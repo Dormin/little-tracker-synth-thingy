@@ -41,7 +41,6 @@ function InitTracker() {
 
 function ProcessTracker(OutputL, OutputR, NumSamples) {
 	var NumTracks = Tracker.NumTracks
-	console.log(NumSamples)
 
 	for (var i = 0; i < NumSamples; i++) {
 		OutputL[i] = 0
