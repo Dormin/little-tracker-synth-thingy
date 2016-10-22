@@ -6,12 +6,17 @@ var Tracker = {
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
+	NumVisibleRows: 0,
+	ScrollMargin: 4,
+	ScrollOffset: 0,
 	NeedsToRedraw: true,
 	Tracks: [],
 	Patterns: []
 }
 
 function InitTracker() {
+	Tracker.NumVisibleRows = Canvas.Height / Font.Height
+
 	for (var i = 0; i < Tracker.NumPatterns; i++) {
 		var NumRows = 64
 		var Rows = []
@@ -62,6 +67,7 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 	}
 
 	HandleTrackerInput()
+	HandleTrackerScrolling()
 
 	if (Tracker.NeedsToRedraw) {
 		DrawTracker()
@@ -91,48 +97,66 @@ function HandleTrackerInput() {
 	}
 }
 
+function HandleTrackerScrolling() {
+	var NumVisibleRows = Tracker.NumVisibleRows
+	var ScrollMargin = Tracker.ScrollMargin
+	var ScrollWindowTop = Tracker.ScrollOffset + ScrollMargin
+	var ScrollWindowBottom = Tracker.ScrollOffset + NumVisibleRows - ScrollMargin
+	if (Tracker.CursorRow < ScrollWindowTop) {
+		Tracker.ScrollOffset = Tracker.CursorRow - ScrollMargin
+		Tracker.NeedsToRedraw = true
+	}
+	if (Tracker.CursorRow > ScrollWindowBottom - 1) {
+		Tracker.ScrollOffset = Tracker.CursorRow - Tracker.NumVisibleRows + ScrollMargin + 1
+		Tracker.NeedsToRedraw = true
+	}
+}
+
 function DrawTracker() {
 	var NumTracks = Tracker.NumTracks
 	var CursorRow = Tracker.CursorRow
 	var CursorCol = Tracker.CursorCol
+	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 	var Rows = Pattern.Rows
 	var Y = 0
-	
+
+	SetColor(54, 57, 73)
 	DrawRect(0, 0, Canvas.Width, Canvas.Height)
 
-	for (var i = 0; i < NumRows; i++) {
-		var Row = Rows[i]
-		var X = Font.Width
+	for (var i = ScrollOffset; i < NumRows; i++) {
+		if (i >= 0) {
+			var Row = Rows[i]
+			var X = Font.Width
 
-		if (i % 16 === 0) {
-			SetColor(71, 83, 108)
-		} else if (i % 4 === 0) {
-			SetColor(63, 70, 90)
-		} else {
-			SetColor(54, 57, 73)
-		}
-
-		DrawRect(0, Y, Canvas.Width, Font.Height)
-		DrawNumber(i, 2, X, Y)
-		X += 3 * Font.Width
-
-		for (var j = 0; j < NumTracks; j++) {
-			var Cell = Row[j]
-			var Char = 45
-
-			if (i === CursorRow && j === CursorCol) {
-				SetColor(240, 16, 32)
-				DrawRect(X, Y, 3 * Font.Width, Font.Height)
+			if (i % 16 === 0) {
+				SetColor(71, 83, 108)
+				DrawRect(0, Y, Canvas.Width, Font.Height)
+			} else if (i % 4 === 0) {
+				SetColor(63, 70, 90)
+				DrawRect(0, Y, Canvas.Width, Font.Height)
 			}
 
-			DrawChar(Char, X, Y)
-			X += Font.Width
-			DrawChar(Char, X, Y)
-			X += Font.Width
-			DrawChar(Char, X, Y)
-			X += 4 * Font.Width
+			DrawNumber(i, 2, X, Y)
+			X += 3 * Font.Width
+
+			for (var j = 0; j < NumTracks; j++) {
+				var Cell = Row[j]
+				var Char = 45
+
+				if (i === CursorRow && j === CursorCol) {
+					SetColor(240, 16, 32)
+					DrawRect(X, Y, 3 * Font.Width, Font.Height)
+				}
+
+				DrawChar(Char, X, Y)
+				X += Font.Width
+				DrawChar(Char, X, Y)
+				X += Font.Width
+				DrawChar(Char, X, Y)
+				X += 4 * Font.Width
+			}
 		}
 
 		Y += Font.Height
