@@ -1,9 +1,10 @@
 "use strict"
 
 var Input = {
-	IsHeld: [],
-	WasPressed: [],
-	WasReleased: []
+	IsHeldNext: {},
+	IsHeld: {},
+	WasPressed: {},
+	WasReleased: {}
 }
 
 function InitInput() {
@@ -15,6 +16,18 @@ function InitInput() {
 
 	document.body.onkeydown = OnKeyDown
 	document.body.onkeyup = OnKeyUp
+}
+
+function UpdateInput() {
+	for (var Key in Input.IsHeldNext) {
+		if (Input.IsHeldNext.hasOwnProperty(Key)) {
+			var IsHeldNext = Input.IsHeldNext[Key]
+			var IsHeld = Input.IsHeld[Key]
+			Input.IsHeld[Key] = IsHeldNext
+			Input.WasPressed[Key] = !IsHeld && IsHeldNext
+			Input.WasReleased[Key] = IsHeld && !IsHeldNext
+		}
+	}
 }
 
 function KeyIsHeld(Key) {
@@ -39,9 +52,7 @@ function OnKeyUp(Event) {
 
 function UpdateKeyState(KeyCode, IsHeld) {
 	var Key = KeyCodeToString(KeyCode)
-	Input.WasPressed[Key] = IsHeld && !Input.IsHeld[Key]
-	Input.WasReleased[Key] = !IsHeld && Input.IsHeld[Key]
-	Input.IsHeld[Key] = IsHeld
+	Input.IsHeldNext[Key] = IsHeld
 }
 
 function KeyCodeToString(KeyCode) {

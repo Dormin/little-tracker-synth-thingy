@@ -42,6 +42,7 @@
 			StartAudio(OnProcess)
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
+				UpdateInput()
 				HandleKeyboard()
 				ProcessTracker(OutputL, OutputR, NumSamples)
 			}
