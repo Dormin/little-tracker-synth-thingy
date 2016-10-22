@@ -6,7 +6,8 @@ var Tracker = {
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
-	Patterns: []
+	Tracks: [],
+	Patterns: [],
 }
 
 function InitTracker() {
@@ -18,9 +19,7 @@ function InitTracker() {
 			var Row = []
 
 			for (var k = 0; k < Tracker.NumTracks; k++) {
-				Row[k] = {
-					Note: null
-				}
+				Row[k] = { Note: null }
 			}
 
 			Rows[j] = Row
@@ -29,6 +28,36 @@ function InitTracker() {
 		Tracker.Patterns[i] = {
 			NumRows: NumRows,
 			Rows: Rows
+		}
+	}
+
+	for (var i = 0; i < Tracker.NumTracks; i++) {
+		Tracker.Tracks[i] = {
+			BufferL: CreateBuffer(Audio.BufferSize),
+			BufferR: CreateBuffer(Audio.BufferSize)
+		}
+	}
+}
+
+function ProcessTracker(OutputL, OutputR, NumSamples) {
+	var NumTracks = Tracker.NumTracks
+	console.log(NumSamples)
+
+	for (var i = 0; i < NumSamples; i++) {
+		OutputL[i] = 0
+		OutputR[i] = 0
+	}
+
+	for (var i = 0; i < NumTracks; i++) {
+		var Track = Tracker.Tracks[i]
+		var BufferL = Track.BufferL
+		var BufferR = Track.BufferR
+
+		ProcessSynth(i, BufferL, BufferR, NumSamples)
+
+		for (var j = 0; j < NumSamples; j++) {
+			OutputL[j] += BufferL[j] / NumTracks
+			OutputR[j] += BufferR[j] / NumTracks
 		}
 	}
 }

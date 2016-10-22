@@ -6,6 +6,7 @@
 	<body>
 		<canvas id="view" width="192" height="144" style="width:384px;height:288px;display:block;margin:auto;image-rendering:pixelated"></canvas>
 		<script src="js/audio.js"></script>
+		<script src="js/buffer.js"></script>
 		<script src="js/canvas.js"></script>
 		<script src="js/input.js"></script>
 		<script src="js/synth.js"></script>
@@ -44,7 +45,7 @@
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
 				HandleKeyboard()
-				ProcessSynth(0, OutputL, OutputR, NumSamples)
+				ProcessTracker(OutputL, OutputR, NumSamples)
 			}
 
 			function HandleKeyboard() {
