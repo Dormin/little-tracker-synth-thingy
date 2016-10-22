@@ -159,10 +159,6 @@ function HandleTrackerScrolling() {
 }
 
 function DrawTracker() {
-	var NumTracks = Tracker.NumTracks
-	var CursorRow = Tracker.CursorRow
-	var CursorCol = Tracker.CursorCol
-	var NumVisibleRows = Tracker.NumVisibleRows
 	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
@@ -174,42 +170,46 @@ function DrawTracker() {
 
 	for (var i = ScrollOffset; i < ScrollOffset + NumRows && i < NumRows; i++) {
 		if (i >= 0) {
-			var Row = Rows[i]
-			var X = Font.Width
-
-			if (i % 16 === 0) {
-				SetColor(71, 83, 108)
-				DrawRect(0, Y, Canvas.Width, Font.Height)
-			} else if (i % 4 === 0) {
-				SetColor(63, 70, 90)
-				DrawRect(0, Y, Canvas.Width, Font.Height)
-			}
-
-			DrawNumber(i, 2, X, Y)
-			X += 3 * Font.Width
-
-			for (var j = 0; j < NumTracks; j++) {
-				var Cell = Row[j]
-				var Char = 45
-
-				if (i === CursorRow && j === CursorCol) {
-					SetColor(240, 16, 32)
-					DrawRect(X, Y, 3 * Font.Width, Font.Height)
-				}
-
-				DrawChar(Char, X, Y)
-				X += Font.Width
-				DrawChar(Char, X, Y)
-				X += Font.Width
-				DrawChar(Char, X, Y)
-				X += 4 * Font.Width
-			}
+			DrawTrackerRow(i, Y)
 		}
-
 		Y += Font.Height
 	}
 
 	Tracker.NeedsToRedraw = false
+}
+
+function DrawTrackerRow(Index, Y) {
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Row = Pattern.Rows[Index]
+	var X = Font.Width
+
+	if (Index % 16 === 0) {
+		SetColor(71, 83, 108)
+		DrawRect(0, Y, Canvas.Width, Font.Height)
+	} else if (Index % 4 === 0) {
+		SetColor(63, 70, 90)
+		DrawRect(0, Y, Canvas.Width, Font.Height)
+	}
+
+	DrawNumber(Index, 2, X, Y)
+	X += 3 * Font.Width
+
+	for (var j = 0; j < Tracker.NumTracks; j++) {
+		var Cell = Row[j]
+		var Char = 45
+
+		if (Index === Tracker.CursorRow && j === Tracker.CursorCol) {
+			SetColor(240, 16, 32)
+			DrawRect(X, Y, 3 * Font.Width, Font.Height)
+		}
+
+		DrawChar(Char, X, Y)
+		X += Font.Width
+		DrawChar(Char, X, Y)
+		X += Font.Width
+		DrawChar(Char, X, Y)
+		X += 4 * Font.Width
+	}
 }
 
 function DrawNumber(Number, NumDigits, X, Y) {
