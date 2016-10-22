@@ -203,21 +203,37 @@ function DrawTrackerRow(Index, Y) {
 			DrawRect(X, Y, 3 * Font.Width, Font.Height)
 		}
 
-		DrawChar(Char, X, Y)
-		X += Font.Width
-		DrawChar(Char, X, Y)
-		X += Font.Width
-		DrawChar(Char, X, Y)
-		X += 4 * Font.Width
+		DrawTrackerNote(Cell.Note, X, Y)
+		X += 6 * Font.Width
+	}
+}
+
+function DrawTrackerNote(Note, X, Y) {
+	if (Note === null) {
+		var DashChar = 45
+		DrawChar(DashChar, X, Y)
+		DrawChar(DashChar, X + Font.Width, Y)
+		DrawChar(DashChar, X + 2 * Font.Width, Y)
+	} else {
+		var Octave = Note / 12 | 0
+		Note = (Note % 12 + 12) % 12
+		var NoteChar = [65, 65, 66, 67, 67, 68, 68, 69, 70, 70, 71, 71][Note]
+		var SharpChar = [45, 35, 45, 45, 35, 45, 35, 45, 45, 35, 45, 35][Note]
+		DrawChar(NoteChar, X, Y)
+		DrawChar(SharpChar, X + Font.Width, Y)
+		DrawDigit(Octave, X + 2 * Font.Width, Y)
 	}
 }
 
 function DrawNumber(Number, NumDigits, X, Y) {
 	X += NumDigits * Font.Width
 	for (var i = 0; i < NumDigits; i++) {
-		var Char = Number % 10 + 48
 		X -= Font.Width
-		DrawChar(Char, X, Y)
+		DrawDigit(Number % 10, X, Y)
 		Number = Number / 10 | 0
 	}
+}
+
+function DrawDigit(Digit, X, Y) {
+	DrawChar(Digit + 48, X, Y)
 }
