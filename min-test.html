@@ -9,6 +9,7 @@
 		<script src="js/canvas.js"></script>
 		<script src="js/input.js"></script>
 		<script src="js/synth.js"></script>
+		<script src="js/tracker.js"></script>
 		<script>
 			var KeyToNoteMap = {
 				65: -9, // A: C
@@ -30,9 +31,10 @@
 			var NumSynths = 1
 			var CurrKey = 0
 
-			InitSynths(NumSynths)
+			InitSynths(Tracker.NumTracks)
 			InitInput()
 			InitCanvas("view")
+			InitTracker()
 
 			var Font = LoadImage("img/font.png")
 			SetColor(128, 128, 128)
