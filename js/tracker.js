@@ -73,19 +73,19 @@ function HandleTrackerInput() {
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 
-	if (KeyWasPressed("Left") && Tracker.CursorCol > 0) {
+	if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
 		Tracker.CursorCol--
 		Tracker.NeedsToRedraw = true
 	}
-	if (KeyWasPressed("Right") && Tracker.CursorCol < NumTracks - 1) {
+	if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
 		Tracker.CursorCol++
 		Tracker.NeedsToRedraw = true
 	}
-	if (KeyWasPressed("Up") && Tracker.CursorRow > 0) {
+	if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
 		Tracker.CursorRow--
 		Tracker.NeedsToRedraw = true
 	}
-	if (KeyWasPressed("Down") && Tracker.CursorRow < NumRows - 1) {
+	if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
 		Tracker.CursorRow++
 		Tracker.NeedsToRedraw = true
 	}

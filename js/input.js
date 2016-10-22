@@ -1,10 +1,15 @@
 "use strict"
 
 var Input = {
+	RepeatDelay: 0.5,
+	RepeatStep: 0.05,
 	IsHeldNext: {},
 	IsHeld: {},
 	WasPressed: {},
-	WasReleased: {}
+	WasReleased: {},
+	IsRepeating: {},
+	RepeatTime: {},
+	Time: null
 }
 
 function InitInput() {
@@ -19,13 +24,35 @@ function InitInput() {
 }
 
 function UpdateInput() {
+	var Time = performance.now() / 1000
+	var DeltaTime = Input.Time === null ? 0 : Time - Input.Time
+
+	Input.Time = Time
+
 	for (var Key in Input.IsHeldNext) {
 		if (Input.IsHeldNext.hasOwnProperty(Key)) {
 			var IsHeldNext = Input.IsHeldNext[Key]
 			var IsHeld = Input.IsHeld[Key]
+			var WasPressed = !IsHeld && IsHeldNext
+			var WasReleased = IsHeld && !IsHeldNext
+			var IsRepeating = false
+			var RepeatTime = Input.RepeatTime[Key]
+
+			if (IsHeld) {
+				RepeatTime -= DeltaTime
+				if (RepeatTime <= 0) {
+					RepeatTime += Input.RepeatStep
+					IsRepeating = true
+				}
+			} else {
+				RepeatTime = Input.RepeatDelay
+			}
+
 			Input.IsHeld[Key] = IsHeldNext
-			Input.WasPressed[Key] = !IsHeld && IsHeldNext
-			Input.WasReleased[Key] = IsHeld && !IsHeldNext
+			Input.WasPressed[Key] = WasPressed
+			Input.WasReleased[Key] = WasReleased
+			Input.IsRepeating[Key] = WasPressed || IsRepeating
+			Input.RepeatTime[Key] = RepeatTime
 		}
 	}
 }
@@ -40,6 +67,10 @@ function KeyWasPressed(Key) {
 
 function KeyWasReleased(Key) {
 	return Input.WasReleased[Key]
+}
+
+function KeyIsRepeating(Key) {
+	return Input.IsRepeating[Key]
 }
 
 function OnKeyDown(Event) {
