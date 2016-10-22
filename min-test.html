@@ -14,24 +14,24 @@
 		<script src="js/tracker.js"></script>
 		<script>
 			var KeyToNoteMap = {
-				65: -9, // A: C
-				87: -8, // W: C#
-				83: -7, // S: D
-				69: -6, // E: D#
-				68: -5, // D: E
-				70: -4, // F: F
-				84: -3, // T: F#
-				71: -2, // G: G
-				89: -1, // Y: G#
-				72: 0, // H: A
-				85: 1, // U: A#
-				74: 2, // J: B
-				75: 3, // K: C
-				79: 4, // O: C#
-				76: 5, // L: D
+				"A": -9, // C
+				"W": -8, // C#
+				"S": -7, // D
+				"E": -6, // D#
+				"D": -5, // E
+				"F": -4, // F
+				"T": -3, // F#
+				"G": -2, // G
+				"Y": -1, // G#
+				"H": 0, // A
+				"U": 1, // A#
+				"J": 2, // B
+				"K": 3, // C
+				"O": 4, // C#
+				"L": 5, // D
 			}
 			var NumSynths = 1
-			var CurrKey = 0
+			var CurrKey = ""
 
 			InitSynths(Tracker.NumTracks)
 			InitInput()
