@@ -61,8 +61,33 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 		}
 	}
 
+	HandleTrackerInput()
+
 	if (Tracker.NeedsToRedraw) {
 		DrawTracker()
+	}
+}
+
+function HandleTrackerInput() {
+	var NumTracks = Tracker.NumTracks
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var NumRows = Pattern.NumRows
+
+	if (KeyWasPressed("Left") && Tracker.CursorCol > 0) {
+		Tracker.CursorCol--
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyWasPressed("Right") && Tracker.CursorCol < NumTracks - 1) {
+		Tracker.CursorCol++
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyWasPressed("Up") && Tracker.CursorRow > 0) {
+		Tracker.CursorRow--
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyWasPressed("Down") && Tracker.CursorRow < NumRows - 1) {
+		Tracker.CursorRow++
+		Tracker.NeedsToRedraw = true
 	}
 }
 
