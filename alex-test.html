@@ -39,10 +39,10 @@
 
 			StartAudio(OnProcess)
 
-			function OnProcess(OutputL, OutputR, NumSamples, SampleRate) {
+			function OnProcess(OutputL, OutputR, NumSamples) {
 				HandleKeyboard()
-				//ProcessSynth(0, OutputL, OutputR, NumSamples, SampleRate)
-				ProcessSynths([0,1,2], OutputL, OutputR, NumSamples, SampleRate)
+				//ProcessSynth(0, OutputL, OutputR, NumSamples)
+				ProcessSynths([0,1,2], OutputL, OutputR, NumSamples)
 			}
 
 			function HandleKeyboard() {

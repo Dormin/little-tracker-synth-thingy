@@ -23,7 +23,8 @@ function SynthNoteOff(Index) {
 	Synth.Gate = 0
 }
 
-function ProcessSynth(Index, OutputL, OutputR, NumSamples, SampleRate) {
+function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
+	var SampleRate = Audio.SampleRate
 	var Synth = Synths[Index]
 	var Gate = Synth.Gate
 	var Freq = Synth.Freq
@@ -39,7 +40,8 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples, SampleRate) {
 	Synth.Time = Time
 }
 
-function ProcessSynths(Indices, OutputL, OutputR, NumSamples, SampleRate) {
+function ProcessSynths(Indices, OutputL, OutputR, NumSamples) {
+	var SampleRate = Audio.SampleRate
 	for (var i = 0; i < NumSamples; i++) {
 		var avgWeight = 1;
 		OutputL[i] = OutputL[i] = 0;

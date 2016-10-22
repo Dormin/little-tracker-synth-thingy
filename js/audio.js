@@ -1,12 +1,18 @@
 "use strict"
 
-var Audio = {}
+var Audio = {
+	BufferSize: 2048,
+	SampleRate: 0,
+	OnProcess: null,
+	Context: null,
+	ScriptNode: null
+}
 
 function StartAudio(OnProcess) {
-	var BufferSize = 2048
 	var Context = new AudioContext()
-	var ScriptNode = Context.createScriptProcessor(BufferSize, 2, 2)
+	var ScriptNode = Context.createScriptProcessor(Audio.BufferSize, 2, 2)
 
+	Audio.SampleRate = Context.sampleRate
 	Audio.OnProcess = OnProcess
 	Audio.Context = Context
 	Audio.ScriptNode = ScriptNode
@@ -19,6 +25,5 @@ function OnAudioProcess(Event) {
 	var OutputL = Event.outputBuffer.getChannelData(0)
 	var OutputR = Event.outputBuffer.getChannelData(1)
 	var NumSamples = OutputL.length
-	var SampleRate = Audio.Context.sampleRate
-	Audio.OnProcess(OutputL, OutputR, NumSamples, SampleRate)
+	Audio.OnProcess(OutputL, OutputR, NumSamples)
 }
