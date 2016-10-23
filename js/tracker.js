@@ -23,6 +23,10 @@ var Tracker = {
 	NumPatterns: 16,
 	NoteKeep: -1,
 	NoteCut: -2,
+	IsPlaying: false,
+	Bpm: 120,
+	SamplesLeftInStep: 0,
+	NextStep: 0,
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
@@ -68,12 +72,71 @@ function InitTracker() {
 }
 
 function ProcessTracker(OutputL, OutputR, NumSamples) {
-	var NumTracks = Tracker.NumTracks
-
 	for (var i = 0; i < NumSamples; i++) {
 		OutputL[i] = 0
 		OutputR[i] = 0
 	}
+
+	if (Tracker.IsPlaying) {
+		ProcessTrackerPlaying(OutputL, OutputR, NumSamples)
+	} else {
+		ProcessTrackerEditing(OutputL, OutputR, NumSamples)
+	}
+}
+
+function ProcessTrackerPlaying(OutputL, OutputR, NumSamples) {
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var NumRows = Pattern.NumRows
+	var StepsPerSecond = 4 * Tracker.Bpm / 60
+	var SamplesPerStep = Audio.SampleRate / StepsPerSecond
+	var SamplesLeftInBuffer = NumSamples
+	var Offset = 0
+
+	while (SamplesLeftInBuffer > 0) {
+		if (Tracker.SamplesLeftInStep <= 0) {
+			ProcessTrackerEvents()
+			Tracker.SamplesLeftInStep += SamplesPerStep
+			Tracker.CursorRow = Tracker.NextStep
+			Tracker.NextStep++
+			if (Tracker.NextStep >= NumRows) {
+				Tracker.NextStep = 0
+			}
+			Tracker.NeedsToRedraw = true
+		}
+
+		var NumSamplesToProcess = Math.min(SamplesLeftInBuffer,
+			Math.ceil(Tracker.SamplesLeftInStep))
+
+		ProcessTrackerMixer(OutputL, OutputR, NumSamplesToProcess, Offset)
+		Offset += NumSamplesToProcess
+		Tracker.SamplesLeftInStep -= NumSamplesToProcess
+		SamplesLeftInBuffer -= NumSamplesToProcess
+	}
+}
+
+function ProcessTrackerEvents() {
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Row = Pattern.Rows[Tracker.NextStep]
+	var NumTracks = Tracker.NumTracks
+
+	for (var i = 0; i < NumTracks; i++) {
+		var Cell = Row[i]
+		var Note = Cell.Note
+
+		if (Note >= 0) {
+			SynthNoteOn(i, Note)
+		} else if (Note === Tracker.NoteCut) {
+			SynthNoteOff(i)
+		}
+	}
+}
+
+function ProcessTrackerEditing(OutputL, OutputR, NumSamples) {
+	ProcessTrackerMixer(OutputL, OutputR, NumSamples, 0)
+}
+
+function ProcessTrackerMixer(OutputL, OutputR, NumSamples, Offset) {
+	var NumTracks = Tracker.NumTracks
 
 	for (var i = 0; i < NumTracks; i++) {
 		var Track = Tracker.Tracks[i]
@@ -83,19 +146,40 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 		ProcessSynth(i, BufferL, BufferR, NumSamples)
 
 		for (var j = 0; j < NumSamples; j++) {
-			OutputL[j] += BufferL[j] / NumTracks
-			OutputR[j] += BufferR[j] / NumTracks
+			OutputL[j + Offset] += BufferL[j] / NumTracks
+			OutputR[j + Offset] += BufferR[j] / NumTracks
 		}
 	}
 }
 
 function HandleTrackerInput(Event, Key) {
+	if (Tracker.IsPlaying) {
+		HandleTrackerPlayingInput(Event, Key)
+	} else {
+		HandleTrackerEditingInput(Event, Key)
+	}
+}
+
+function HandleTrackerPlayingInput(Event, Key) {
+	if (Event === "Press" && Key === "Spacebar") {
+		SynthNoteOffAll()
+		Tracker.IsPlaying = false
+		Tracker.NeedsToRedraw = true
+	}
+}
+
+function HandleTrackerEditingInput(Event, Key) {
 	var KeyToNoteMap = Tracker.KeyToNoteMap
 	var NumTracks = Tracker.NumTracks
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 
-	if (Event === "Press" || Event === "Repeat") {
+	if (Event === "Press" && Key === "Spacebar") {
+		SynthNoteOffAll()
+		Tracker.NextStep = 0
+		Tracker.IsPlaying = true
+		Tracker.NeedsToRedraw = true
+	} else if (Event === "Press" || Event === "Repeat") {
 		if (KeyToNoteMap.hasOwnProperty(Key)) {
 			var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
 			var Row = Pattern.Rows[Tracker.CursorRow]
@@ -193,7 +277,11 @@ function DrawTrackerRow(Index, Y) {
 	var Row = Pattern.Rows[Index]
 	var X = Font.Width
 
-	if (Index % 16 === 0) {
+	if (Tracker.IsPlaying && Index === Tracker.CursorRow) {
+		SetAlpha(1.0)
+		SetColor(57, 124, 172)
+		DrawRect(0, Y, Canvas.Width, Font.Height)
+	} else if (Index % 16 === 0) {
 		SetAlpha(1.0)
 		SetColor(71, 83, 108)
 		DrawRect(0, Y, Canvas.Width, Font.Height)

@@ -23,6 +23,12 @@ function SynthNoteOff(Index) {
 	Synth.Gate = 0
 }
 
+function SynthNoteOffAll() {
+	for (var i = 0; i < Synths.length; i++) {
+		SynthNoteOff(i)
+	}
+}
+
 function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 	var SampleRate = Audio.SampleRate
 	var Synth = Synths[Index]

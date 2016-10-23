@@ -63,6 +63,7 @@ function KeyCodeToString(KeyCode) {
 	}
 
 	switch (KeyCode) {
+		case 32: return "Spacebar"
 		case 37: return "Left"
 		case 38: return "Up"
 		case 39: return "Right"
