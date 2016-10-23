@@ -8,17 +8,20 @@ var Audio = {
 	ScriptNode: null
 }
 
-function StartAudio(OnProcess) {
+function InitAudio() {
 	var Context = new AudioContext()
 	var ScriptNode = Context.createScriptProcessor(Audio.BufferSize, 2, 2)
 
 	Audio.SampleRate = Context.sampleRate
-	Audio.OnProcess = OnProcess
 	Audio.Context = Context
 	Audio.ScriptNode = ScriptNode
 
 	ScriptNode.onaudioprocess = OnAudioProcess
-	ScriptNode.connect(Context.destination)
+}
+
+function StartAudio(OnProcess) {
+	Audio.OnProcess = OnProcess
+	Audio.ScriptNode.connect(Audio.Context.destination)
 }
 
 function OnAudioProcess(Event) {

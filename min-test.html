@@ -13,10 +13,11 @@
 		<script src="js/synth.js"></script>
 		<script src="js/tracker.js"></script>
 		<script>
-			InitSynths(Tracker.NumTracks)
-			InitInput()
+			InitAudio()
 			InitCanvas("view")
 			InitFont()
+			InitInput()
+			InitSynths(Tracker.NumTracks)
 			InitTracker()
 
 			StartAudio(OnProcess)
