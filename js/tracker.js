@@ -139,6 +139,7 @@ function DrawTracker() {
 	var Rows = Pattern.Rows
 	var Y = 0
 
+	SetAlpha(1.0)
 	SetColor(54, 57, 73)
 	DrawRect(0, 0, Canvas.Width, Canvas.Height)
 
@@ -173,13 +174,16 @@ function DrawTrackerRow(Index, Y) {
 	var X = Font.Width
 
 	if (Index % 16 === 0) {
+		SetAlpha(1.0)
 		SetColor(71, 83, 108)
 		DrawRect(0, Y, Canvas.Width, Font.Height)
 	} else if (Index % 4 === 0) {
+		SetAlpha(1.0)
 		SetColor(63, 70, 90)
 		DrawRect(0, Y, Canvas.Width, Font.Height)
 	}
 
+	SetAlpha(0.5)
 	DrawNumber(Index, 2, X, Y)
 	X += 3 * Font.Width
 
@@ -188,6 +192,7 @@ function DrawTrackerRow(Index, Y) {
 		var Char = 45
 
 		if (Index === Tracker.CursorRow && j === Tracker.CursorCol) {
+			SetAlpha(1.0)
 			SetColor(240, 16, 32)
 			DrawRect(X, Y, 3 * Font.Width, Font.Height)
 		}
@@ -200,6 +205,7 @@ function DrawTrackerRow(Index, Y) {
 function DrawTrackerNote(Note, X, Y) {
 	if (Note === null) {
 		var DashChar = 45
+		SetAlpha(0.5)
 		DrawChar(DashChar, X, Y)
 		DrawChar(DashChar, X + Font.Width, Y)
 		DrawChar(DashChar, X + 2 * Font.Width, Y)
@@ -208,6 +214,7 @@ function DrawTrackerNote(Note, X, Y) {
 		Note = (Note % 12 + 12) % 12
 		var NoteChar = [67, 67, 68, 68, 69, 70, 70, 71, 71, 65, 65, 66][Note]
 		var SharpChar = [45, 35, 45, 35, 45, 45, 35, 45, 35, 45, 35, 45][Note]
+		SetAlpha(1.0)
 		DrawChar(NoteChar, X, Y)
 		DrawChar(SharpChar, X + Font.Width, Y)
 		DrawDigit(Octave, X + 2 * Font.Width, Y)

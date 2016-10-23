@@ -28,6 +28,10 @@ function StartDrawing(OnDraw) {
 	requestAnimationFrame(OnAnimationFrame)
 }
 
+function SetAlpha(Alpha) {
+	Canvas.Context.globalAlpha = Alpha
+}
+
 function SetColor(R, G, B) {
 	Canvas.Context.fillStyle = "rgb(" + R + "," + G + "," + B + ")"
 }
