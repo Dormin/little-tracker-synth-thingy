@@ -123,23 +123,21 @@ function HandleTrackerInput() {
 		}
 	}
 
-	if (Tracker.CurrentKey === null) {
-		if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
-			Tracker.CursorCol--
-			Tracker.NeedsToRedraw = true
-		}
-		if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
-			Tracker.CursorCol++
-			Tracker.NeedsToRedraw = true
-		}
-		if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
-			Tracker.CursorRow--
-			Tracker.NeedsToRedraw = true
-		}
-		if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
-			Tracker.CursorRow++
-			Tracker.NeedsToRedraw = true
-		}
+	if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
+		Tracker.CursorCol--
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
+		Tracker.CursorCol++
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
+		Tracker.CursorRow--
+		Tracker.NeedsToRedraw = true
+	}
+	if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
+		Tracker.CursorRow++
+		Tracker.NeedsToRedraw = true
 	}
 }
 

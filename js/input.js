@@ -7,8 +7,9 @@ var Input = {
 	IsHeld: {},
 	WasPressed: {},
 	WasReleased: {},
-	IsRepeating: {},
-	RepeatTime: {},
+	LastPressed: null,
+	LastIsRepeating: false,
+	RepeatTime: 0,
 	Time: null
 }
 
@@ -35,24 +36,26 @@ function UpdateInput() {
 			var IsHeld = Input.IsHeld[Key]
 			var WasPressed = !IsHeld && IsHeldNext
 			var WasReleased = IsHeld && !IsHeldNext
-			var IsRepeating = false
-			var RepeatTime = Input.RepeatTime[Key]
 
-			if (IsHeld) {
-				RepeatTime -= DeltaTime
-				if (RepeatTime <= 0) {
-					RepeatTime += Input.RepeatStep
-					IsRepeating = true
-				}
-			} else {
-				RepeatTime = Input.RepeatDelay
+			if (WasPressed) {
+				Input.LastPressed = Key
+				Input.RepeatTime = Input.RepeatDelay
+			} else if (WasReleased && Key === Input.LastPressed) {
+				Input.LastPressed = null
 			}
 
 			Input.IsHeld[Key] = IsHeldNext
 			Input.WasPressed[Key] = WasPressed
 			Input.WasReleased[Key] = WasReleased
-			Input.IsRepeating[Key] = WasPressed || IsRepeating
-			Input.RepeatTime[Key] = RepeatTime
+		}
+	}
+
+	if (Input.LastPressed !== null) {
+		Input.LastIsRepeating = false
+		Input.RepeatTime -= DeltaTime
+		if (Input.RepeatTime <= 0) {
+			Input.RepeatTime += Input.RepeatStep
+			Input.LastIsRepeating = true
 		}
 	}
 }
@@ -70,7 +73,7 @@ function KeyWasReleased(Key) {
 }
 
 function KeyIsRepeating(Key) {
-	return Input.IsRepeating[Key]
+	return Key === Input.LastPressed && (Input.LastIsRepeating || Input.WasPressed[Key])
 }
 
 function OnKeyDown(Event) {
