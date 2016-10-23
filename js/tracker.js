@@ -215,8 +215,8 @@ function DrawTrackerNote(Note, X, Y) {
 	} else {
 		var Octave = Note / 12 | 0
 		Note = (Note % 12 + 12) % 12
-		var NoteChar = [65, 65, 66, 67, 67, 68, 68, 69, 70, 70, 71, 71][Note]
-		var SharpChar = [45, 35, 45, 45, 35, 45, 35, 45, 45, 35, 45, 35][Note]
+		var NoteChar = [67, 67, 68, 68, 69, 70, 70, 71, 71, 65, 65, 66][Note]
+		var SharpChar = [45, 35, 45, 35, 45, 45, 35, 45, 35, 45, 35, 45][Note]
 		DrawChar(NoteChar, X, Y)
 		DrawChar(SharpChar, X + Font.Width, Y)
 		DrawDigit(Octave, X + 2 * Font.Width, Y)
