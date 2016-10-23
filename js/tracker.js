@@ -85,74 +85,50 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 			OutputR[j] += BufferR[j] / NumTracks
 		}
 	}
-
-	HandleTrackerInput()
-	HandleTrackerScrolling()
 }
 
-function HandleTrackerInput() {
+function HandleTrackerInput(Event, Key) {
 	var KeyToNoteMap = Tracker.KeyToNoteMap
 	var NumTracks = Tracker.NumTracks
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows
 
-	for (var Key in KeyToNoteMap) {
+	if (Event === "Press" || Event === "Repeat") {
 		if (KeyToNoteMap.hasOwnProperty(Key)) {
-			if (KeyIsRepeating(Key)) {
-				var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
-				var Row = Pattern.Rows[Tracker.CursorRow]
-				var Cell = Row[Tracker.CursorCol]
-				Cell.Note = Note
-				SynthNoteOn(Tracker.CursorCol, Note)
-				Tracker.CurrentKey = Key
-				if (Tracker.CursorRow < NumRows - 1) {
-					Tracker.CursorRow++
-				}
-				Tracker.NeedsToRedraw = true
-			}
-		}
-		if (Tracker.CurrentKey !== null && KeyWasReleased(Tracker.CurrentKey)) {
-			Tracker.CurrentKey = null
-			for (var i = 0; i < Tracker.NumTracks; i++) {
-				SynthNoteOff(i)
-			}
-		}
-	}
+			var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
+			var Row = Pattern.Rows[Tracker.CursorRow]
+			var Cell = Row[Tracker.CursorCol]
 
-	if (KeyIsRepeating("Left") && Tracker.CursorCol > 0) {
-		Tracker.CursorCol--
-		Tracker.NeedsToRedraw = true
-	}
-	if (KeyIsRepeating("Right") && Tracker.CursorCol < NumTracks - 1) {
-		Tracker.CursorCol++
-		Tracker.NeedsToRedraw = true
-	}
-	if (KeyIsRepeating("Up") && Tracker.CursorRow > 0) {
-		Tracker.CursorRow--
-		Tracker.NeedsToRedraw = true
-	}
-	if (KeyIsRepeating("Down") && Tracker.CursorRow < NumRows - 1) {
-		Tracker.CursorRow++
-		Tracker.NeedsToRedraw = true
-	}
-}
-
-function HandleTrackerScrolling() {
-	var NumVisibleRows = Tracker.NumVisibleRows
-	var ScrollMargin = Tracker.ScrollMargin
-	var ScrollWindowTop = Tracker.ScrollOffset + ScrollMargin
-	var ScrollWindowBottom = Tracker.ScrollOffset + NumVisibleRows - ScrollMargin
-	if (Tracker.CursorRow < ScrollWindowTop) {
-		Tracker.ScrollOffset = Tracker.CursorRow - ScrollMargin
-		Tracker.NeedsToRedraw = true
-	}
-	if (Tracker.CursorRow > ScrollWindowBottom - 1) {
-		Tracker.ScrollOffset = Tracker.CursorRow - Tracker.NumVisibleRows + ScrollMargin + 1
-		Tracker.NeedsToRedraw = true
+			Cell.Note = Note
+			SynthNoteOn(Tracker.CursorCol, Note)
+			Tracker.CurrentKey = Key
+			if (Tracker.CursorRow < NumRows - 1) {
+				Tracker.CursorRow++
+			}
+			Tracker.NeedsToRedraw = true
+		} else if (Key === "Left" && Tracker.CursorCol > 0) {
+			Tracker.CursorCol--
+			Tracker.NeedsToRedraw = true
+		} else if (Key === "Right" && Tracker.CursorCol < NumTracks - 1) {
+			Tracker.CursorCol++
+			Tracker.NeedsToRedraw = true
+		} else if (Key === "Up" && Tracker.CursorRow > 0) {
+			Tracker.CursorRow--
+			Tracker.NeedsToRedraw = true
+		} else if (Key === "Down" && Tracker.CursorRow < NumRows - 1) {
+			Tracker.CursorRow++
+			Tracker.NeedsToRedraw = true
+		}
+	} else if (Event === "Release" && Tracker.CurrentKey === Key) {
+		Tracker.CurrentKey = null
+		for (var i = 0; i < Tracker.NumTracks; i++) {
+			SynthNoteOff(i)
+		}
 	}
 }
 
 function DrawTracker() {
+	HandleTrackerScrolling()
 	if (!Tracker.NeedsToRedraw) {
 		return
 	}
@@ -174,6 +150,21 @@ function DrawTracker() {
 	}
 
 	Tracker.NeedsToRedraw = false
+}
+
+function HandleTrackerScrolling() {
+	var NumVisibleRows = Tracker.NumVisibleRows
+	var ScrollMargin = Tracker.ScrollMargin
+	var ScrollWindowTop = Tracker.ScrollOffset + ScrollMargin
+	var ScrollWindowBottom = Tracker.ScrollOffset + NumVisibleRows - ScrollMargin
+	if (Tracker.CursorRow < ScrollWindowTop) {
+		Tracker.ScrollOffset = Tracker.CursorRow - ScrollMargin
+		Tracker.NeedsToRedraw = true
+	}
+	if (Tracker.CursorRow > ScrollWindowBottom - 1) {
+		Tracker.ScrollOffset = Tracker.CursorRow - Tracker.NumVisibleRows + ScrollMargin + 1
+		Tracker.NeedsToRedraw = true
+	}
 }
 
 function DrawTrackerRow(Index, Y) {

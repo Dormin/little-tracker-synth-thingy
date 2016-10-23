@@ -13,6 +13,7 @@
 		<script src="js/synth.js"></script>
 		<script src="js/tracker.js"></script>
 		<script>
+
 			InitAudio()
 			InitCanvas("view")
 			InitFont()
@@ -22,14 +23,18 @@
 
 			StartAudio(OnProcess)
 			StartDrawing(OnDraw)
+			StartInput(OnInput)
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
-				UpdateInput()
 				ProcessTracker(OutputL, OutputR, NumSamples)
 			}
 
 			function OnDraw() {
 				DrawTracker()
+			}
+
+			function OnInput(Event, Key) {
+				HandleTrackerInput(Event, Key)
 			}
 
 		</script>
