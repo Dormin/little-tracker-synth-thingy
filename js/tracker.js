@@ -21,6 +21,8 @@ var Tracker = {
 	},
 	NumTracks: 4,
 	NumPatterns: 16,
+	NoteKeep: -1,
+	NoteCut: -2,
 	ActivePattern: 0,
 	CursorCol: 0,
 	CursorRow: 0,
@@ -45,7 +47,7 @@ function InitTracker() {
 			var Row = []
 
 			for (var k = 0; k < Tracker.NumTracks; k++) {
-				Row[k] = { Note: null }
+				Row[k] = { Note: Tracker.NoteKeep }
 			}
 
 			Rows[j] = Row
@@ -110,7 +112,16 @@ function HandleTrackerInput(Event, Key) {
 			var Row = Pattern.Rows[Tracker.CursorRow]
 			var Cell = Row[Tracker.CursorCol]
 
-			Cell.Note = null
+			Cell.Note = Tracker.NoteKeep
+			if (Tracker.CursorRow < NumRows - 1) {
+				Tracker.CursorRow++
+			}
+			Tracker.NeedsToRedraw = true
+		} else if (Key === "Period") {
+			var Row = Pattern.Rows[Tracker.CursorRow]
+			var Cell = Row[Tracker.CursorCol]
+
+			Cell.Note = Tracker.NoteCut
 			if (Tracker.CursorRow < NumRows - 1) {
 				Tracker.CursorRow++
 			}
@@ -212,12 +223,17 @@ function DrawTrackerRow(Index, Y) {
 }
 
 function DrawTrackerNote(Note, X, Y) {
-	if (Note === null) {
+	if (Note === Tracker.NoteKeep) {
 		var DashChar = 45
-		SetAlpha(0.5)
+		SetAlpha(0.25)
 		DrawChar(DashChar, X, Y)
 		DrawChar(DashChar, X + Font.Width, Y)
 		DrawChar(DashChar, X + 2 * Font.Width, Y)
+	} else if (Note === Tracker.NoteCut) {
+		SetAlpha(0.5)
+		DrawChar(67, X, Y)
+		DrawChar(85, X + Font.Width, Y)
+		DrawChar(84, X + 2 * Font.Width, Y)
 	} else {
 		var Octave = Note / 12 | 0
 		Note = (Note % 12 + 12) % 12
