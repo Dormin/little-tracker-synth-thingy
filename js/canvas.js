@@ -4,8 +4,7 @@ var Canvas = {
 	Width: 0,
 	Height: 0,
 	OnDraw: null,
-	Context: null,
-	Images: []
+	Context: null
 }
 
 function InitCanvas(ElementId) {
@@ -14,13 +13,6 @@ function InitCanvas(ElementId) {
 	Canvas.Width = Element.width
 	Canvas.Height = Element.height
 	Canvas.Context = Context
-}
-
-function LoadImage(Src) {
-	var Id = Canvas.Images.length
-	Canvas.Images[Id] = new Image()
-	Canvas.Images[Id].src = Src
-	return Id
 }
 
 function StartDrawing(OnDraw) {
@@ -41,7 +33,7 @@ function DrawRect(X, Y, Width, Height) {
 }
 
 function DrawImage(Id, Dx, Dy, Sx, Sy, Width, Height) {
-	var Image = Canvas.Images[Id]
+	var Image = Resources.Images[Id]
 	if (Image) {
 		Canvas.Context.drawImage(Image, Sx, Sy, Width, Height, Dx, Dy, Width, Height);
 	}

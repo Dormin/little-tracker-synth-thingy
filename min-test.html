@@ -10,6 +10,7 @@
 		<script src="js/canvas.js"></script>
 		<script src="js/font.js"></script>
 		<script src="js/input.js"></script>
+		<script src="js/resources.js"></script>
 		<script src="js/synth.js"></script>
 		<script src="js/tracker.js"></script>
 		<script>
@@ -21,9 +22,13 @@
 			InitSynths(Tracker.NumTracks)
 			InitTracker()
 
-			StartAudio(OnProcess)
-			StartDrawing(OnDraw)
-			StartInput(OnInput)
+			WaitForResources(OnResourcesLoaded)
+
+			function OnResourcesLoaded() {
+				StartAudio(OnProcess)
+				StartDrawing(OnDraw)
+				StartInput(OnInput)
+			}
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
 				ProcessTracker(OutputL, OutputR, NumSamples)
