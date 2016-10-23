@@ -106,6 +106,15 @@ function HandleTrackerInput(Event, Key) {
 				Tracker.CursorRow++
 			}
 			Tracker.NeedsToRedraw = true
+		} else if (Key === "Dash") {
+			var Row = Pattern.Rows[Tracker.CursorRow]
+			var Cell = Row[Tracker.CursorCol]
+
+			Cell.Note = null
+			if (Tracker.CursorRow < NumRows - 1) {
+				Tracker.CursorRow++
+			}
+			Tracker.NeedsToRedraw = true
 		} else if (Key === "Left" && Tracker.CursorCol > 0) {
 			Tracker.CursorCol--
 			Tracker.NeedsToRedraw = true
