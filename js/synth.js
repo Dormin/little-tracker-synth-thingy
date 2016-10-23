@@ -1,11 +1,17 @@
 "use strict"
 
-var Synths = []
+var Synth = {
+	GateTransitionTime: 0.003,
+	NumSynths: 0,
+	States: []
+}
 
 function InitSynths(NumSynths) {
+	Synth.NumSynths = NumSynths
 	for (var i = 0; i < NumSynths; i++) {
-		Synths[i] = {
+		Synth.States[i] = {
 			Gate: 0,
+			TargetGate: 0,
 			Freq: 0,
 			Time: 0
 		}
@@ -13,57 +19,50 @@ function InitSynths(NumSynths) {
 }
 
 function SynthNoteOn(Index, Note) {
-	var Synth = Synths[Index]
-	Synth.Gate = 1
-	Synth.Freq = 440 * Math.pow(2, (Note - 57) / 12)
+	var State = Synth.States[Index]
+	State.TargetGate = 1
+	State.Freq = 440 * Math.pow(2, (Note - 57) / 12)
 }
 
 function SynthNoteOff(Index) {
-	var Synth = Synths[Index]
-	Synth.Gate = 0
+	var State = Synth.States[Index]
+	State.TargetGate = 0
 }
 
 function SynthNoteOffAll() {
-	for (var i = 0; i < Synths.length; i++) {
+	for (var i = 0; i < Synth.NumSynths; i++) {
 		SynthNoteOff(i)
 	}
 }
 
 function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 	var SampleRate = Audio.SampleRate
-	var Synth = Synths[Index]
-	var Gate = Synth.Gate
-	var Freq = Synth.Freq
-	var Time = Synth.Time
+	var GateTransitionTime = Synth.GateTransitionTime
+	var State = Synth.States[Index]
+	var Gate = State.Gate
+	var TargetGate = State.TargetGate
+	var Freq = State.Freq
+	var Time = State.Time
+	var GateDelta = 1 / GateTransitionTime / SampleRate
 
 	for (var i = 0; i < NumSamples; i++) {
+		if (Gate > TargetGate) {
+			Gate -= GateDelta
+			if (Gate < 0) {
+				Gate = 0
+			}
+		} else if (Gate < TargetGate) {
+			Gate += GateDelta
+			if (Gate > 1) {
+				Gate = 1
+			}
+		}
 		var Sample = Gate * Math.sin(2 * Math.PI * Time)
 		Time += Freq / SampleRate
 		OutputL[i] = Sample
 		OutputR[i] = Sample
 	}
 
-	Synth.Time = Time
-}
-
-function ProcessSynths(Indices, OutputL, OutputR, NumSamples) {
-	var SampleRate = Audio.SampleRate
-	for (var i = 0; i < NumSamples; i++) {
-		var avgWeight = 1;
-		OutputL[i] = OutputL[i] = 0;
-		for (var Index in Indices){
-			var Synth = Synths[Index]
-			var Gate = Synth.Gate
-			var Freq = Synth.Freq
-			var Time = Synth.Time
-			
-			var Sample = Gate * Math.sin(2 * Math.PI * Time) / avgWeight
-			avgWeight += Gate
-			Time += Freq / SampleRate
-			OutputL[i] += Sample
-			OutputR[i] += Sample
-
-			Synth.Time = Time
-		}
-	}
+	State.Gate = Gate
+	State.Time = Time
 }

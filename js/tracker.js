@@ -178,6 +178,7 @@ function HandleTrackerEditingInput(Event, Key) {
 		SynthNoteOffAll()
 		Tracker.NextStep = 0
 		Tracker.IsPlaying = true
+		Tracker.SamplesLeftInStep = 0
 		Tracker.NeedsToRedraw = true
 	} else if (Event === "Press" || Event === "Repeat") {
 		if (KeyToNoteMap.hasOwnProperty(Key)) {
