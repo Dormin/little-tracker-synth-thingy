@@ -3,6 +3,7 @@
 var Canvas = {
 	Width: 0,
 	Height: 0,
+	OnDraw: null,
 	Context: null,
 	Images: []
 }
@@ -22,6 +23,11 @@ function LoadImage(Src) {
 	return Id
 }
 
+function StartDrawing(OnDraw) {
+	Canvas.OnDraw = OnDraw
+	requestAnimationFrame(OnAnimationFrame)
+}
+
 function SetColor(R, G, B) {
 	Canvas.Context.fillStyle = "rgb(" + R + "," + G + "," + B + ")"
 }
@@ -35,4 +41,9 @@ function DrawImage(Id, Dx, Dy, Sx, Sy, Width, Height) {
 	if (Image) {
 		Canvas.Context.drawImage(Image, Sx, Sy, Width, Height, Dx, Dy, Width, Height);
 	}
+}
+
+function OnAnimationFrame() {
+	Canvas.OnDraw()
+	requestAnimationFrame(OnAnimationFrame)
 }

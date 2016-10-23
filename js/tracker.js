@@ -88,10 +88,6 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 
 	HandleTrackerInput()
 	HandleTrackerScrolling()
-
-	if (Tracker.NeedsToRedraw) {
-		DrawTracker()
-	}
 }
 
 function HandleTrackerInput() {
@@ -157,6 +153,10 @@ function HandleTrackerScrolling() {
 }
 
 function DrawTracker() {
+	if (!Tracker.NeedsToRedraw) {
+		return
+	}
+
 	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var NumRows = Pattern.NumRows

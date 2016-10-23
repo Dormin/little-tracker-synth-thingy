@@ -21,10 +21,15 @@
 			InitTracker()
 
 			StartAudio(OnProcess)
+			StartDrawing(OnDraw)
 
 			function OnProcess(OutputL, OutputR, NumSamples) {
 				UpdateInput()
 				ProcessTracker(OutputL, OutputR, NumSamples)
+			}
+
+			function OnDraw() {
+				DrawTracker()
 			}
 
 		</script>
