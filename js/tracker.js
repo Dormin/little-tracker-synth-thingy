@@ -162,9 +162,7 @@ function HandleTrackerInput(Event, Key) {
 
 function HandleTrackerPlayingInput(Event, Key) {
 	if (Event === "Press" && Key === "Spacebar") {
-		SynthNoteOffAll()
-		Tracker.IsPlaying = false
-		Tracker.NeedsToRedraw = true
+		TrackerStop()
 	}
 }
 
@@ -175,42 +173,17 @@ function HandleTrackerEditingInput(Event, Key) {
 	var NumRows = Pattern.NumRows
 
 	if (Event === "Press" && Key === "Spacebar") {
-		SynthNoteOffAll()
-		Tracker.NextStep = 0
-		Tracker.IsPlaying = true
-		Tracker.SamplesLeftInStep = 0
-		Tracker.NeedsToRedraw = true
+		TrackerPlay()
 	} else if (Event === "Press" || Event === "Repeat") {
 		if (KeyToNoteMap.hasOwnProperty(Key)) {
 			var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
-			var Row = Pattern.Rows[Tracker.CursorRow]
-			var Cell = Row[Tracker.CursorCol]
-
-			Cell.Note = Note
-			SynthNoteOn(Tracker.CursorCol, Note)
+			TrackerInsertNote(Note)
 			Tracker.CurrentKey = Key
-			if (Tracker.CursorRow < NumRows - 1) {
-				Tracker.CursorRow++
-			}
-			Tracker.NeedsToRedraw = true
+			SynthNoteOn(Tracker.CursorCol, Note)
 		} else if (Key === "Dash") {
-			var Row = Pattern.Rows[Tracker.CursorRow]
-			var Cell = Row[Tracker.CursorCol]
-
-			Cell.Note = Tracker.NoteKeep
-			if (Tracker.CursorRow < NumRows - 1) {
-				Tracker.CursorRow++
-			}
-			Tracker.NeedsToRedraw = true
+			TrackerInsertNote(Tracker.NoteKeep)
 		} else if (Key === "Period") {
-			var Row = Pattern.Rows[Tracker.CursorRow]
-			var Cell = Row[Tracker.CursorCol]
-
-			Cell.Note = Tracker.NoteCut
-			if (Tracker.CursorRow < NumRows - 1) {
-				Tracker.CursorRow++
-			}
-			Tracker.NeedsToRedraw = true
+			TrackerInsertNote(Tracker.NoteCut)
 		} else if (Key === "Left" && Tracker.CursorCol > 0) {
 			Tracker.CursorCol--
 			Tracker.NeedsToRedraw = true
@@ -230,6 +203,33 @@ function HandleTrackerEditingInput(Event, Key) {
 			SynthNoteOff(i)
 		}
 	}
+}
+
+function TrackerPlay() {
+	SynthNoteOffAll()
+	Tracker.NextStep = 0
+	Tracker.IsPlaying = true
+	Tracker.SamplesLeftInStep = 0
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerStop() {
+	SynthNoteOffAll()
+	Tracker.IsPlaying = false
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerInsertNote(Note) {
+	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Row = Pattern.Rows[Tracker.CursorRow]
+	var Cell = Row[Tracker.CursorCol]
+
+	Cell.Note = Note
+	
+	if (Tracker.CursorRow < Pattern.NumRows - 1) {
+		Tracker.CursorRow++
+	}
+	Tracker.NeedsToRedraw = true
 }
 
 function DrawTracker() {
