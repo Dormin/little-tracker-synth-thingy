@@ -1,23 +1,13 @@
 "use strict"
 
 var Tracker = {
+	KeyToOctaveMap: {
+		"0": 0, "1": 1, "2": 2, "3": 3, "4": 4,
+		"5": 5, "6": 6, "7": 7, "8": 8, "9": 9
+	},
 	KeyToNoteMap: {
-		"A": 0, // C
-		"W": 1, // C#
-		"S": 2, // D
-		"E": 3, // D#
-		"D": 4, // E
-		"F": 5, // F
-		"T": 6, // F#
-		"G": 7, // G
-		"Y": 8, // G#
-		"H": 9, // A
-		"U": 10, // A#
-		"J": 11, // B
-		"K": 12, // C
-		"O": 13, // C#
-		"L": 14, // D
-		"P": 15 // D#
+		"A": 0, "W": 1, "S": 2, "E": 3, "D": 4, "F": 5, "T": 6, "G": 7,
+		"Y": 8, "H": 9, "U": 10, "J": 11, "K": 12, "O": 13, "L": 14, "P": 15
 	},
 	NumTracks: 4,
 	NumPatterns: 16,
@@ -167,6 +157,7 @@ function HandleTrackerPlayingInput(Event, Key) {
 }
 
 function HandleTrackerEditingInput(Event, Key) {
+	var KeyToOctaveMap = Tracker.KeyToOctaveMap
 	var KeyToNoteMap = Tracker.KeyToNoteMap
 	var NumTracks = Tracker.NumTracks
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
@@ -175,7 +166,10 @@ function HandleTrackerEditingInput(Event, Key) {
 	if (Event === "Press" && Key === "Spacebar") {
 		TrackerPlay()
 	} else if (Event === "Press" || Event === "Repeat") {
-		if (KeyToNoteMap.hasOwnProperty(Key)) {
+		if (KeyToOctaveMap.hasOwnProperty(Key)) {
+			var Octave = KeyToOctaveMap[Key]
+			TrackerChangeOctave(Octave)
+		} else if (KeyToNoteMap.hasOwnProperty(Key)) {
 			var Note = Tracker.CurrentOctave * 12 + KeyToNoteMap[Key]
 			TrackerInsertNote(Note)
 			Tracker.CurrentKey = Key
@@ -184,18 +178,14 @@ function HandleTrackerEditingInput(Event, Key) {
 			TrackerInsertNote(Tracker.NoteKeep)
 		} else if (Key === "Period") {
 			TrackerInsertNote(Tracker.NoteCut)
-		} else if (Key === "Left" && Tracker.CursorCol > 0) {
-			Tracker.CursorCol--
-			Tracker.NeedsToRedraw = true
-		} else if (Key === "Right" && Tracker.CursorCol < NumTracks - 1) {
-			Tracker.CursorCol++
-			Tracker.NeedsToRedraw = true
-		} else if (Key === "Up" && Tracker.CursorRow > 0) {
-			Tracker.CursorRow--
-			Tracker.NeedsToRedraw = true
-		} else if (Key === "Down" && Tracker.CursorRow < NumRows - 1) {
-			Tracker.CursorRow++
-			Tracker.NeedsToRedraw = true
+		} else if (Key === "Left") {
+			TrackerMoveCursorLeft()
+		} else if (Key === "Right") {
+			TrackerMoveCursorRight()
+		} else if (Key === "Up") {
+			TrackerMoveCursorUp()
+		} else if (Key === "Down") {
+			TrackerMoveCursorDown()
 		}
 	} else if (Event === "Release" && Tracker.CurrentKey === Key) {
 		Tracker.CurrentKey = null
@@ -219,17 +209,55 @@ function TrackerStop() {
 	Tracker.NeedsToRedraw = true
 }
 
-function TrackerInsertNote(Note) {
+function TrackerChangeOctave(Octave) {
 	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
 	var Row = Pattern.Rows[Tracker.CursorRow]
 	var Cell = Row[Tracker.CursorCol]
 
-	Cell.Note = Note
-	
-	if (Tracker.CursorRow < Pattern.NumRows - 1) {
-		Tracker.CursorRow++
+	Tracker.CurrentOctave = Octave
+	if (Cell.Note >= 0) {
+		Cell.Note = Octave * 12 + Cell.Note % 12
+		TrackerMoveCursorDown()
+		Tracker.NeedsToRedraw = true
 	}
+}
+
+function TrackerInsertNote(Note) {
+	var Pattern = GetTrackerActivePattern()
+	var Row = Pattern.Rows[Tracker.CursorRow]
+	var Cell = Row[Tracker.CursorCol]
+
+	Cell.Note = Note
+	TrackerMoveCursorDown()
 	Tracker.NeedsToRedraw = true
+}
+
+function TrackerMoveCursorLeft() {
+	if (Tracker.CursorCol > 0) {
+		Tracker.CursorCol--
+		Tracker.NeedsToRedraw = true
+	}
+}
+
+function TrackerMoveCursorRight() {
+	if (Tracker.CursorCol < Tracker.NumTracks - 1) {
+		Tracker.CursorCol++
+		Tracker.NeedsToRedraw = true
+	}
+}
+
+function TrackerMoveCursorUp() {
+	if (Tracker.CursorRow > 0) {
+		Tracker.CursorRow--
+		Tracker.NeedsToRedraw = true
+	}
+}
+
+function TrackerMoveCursorDown() {
+	if (Tracker.CursorRow < GetTrackerActivePattern().NumRows - 1) {
+		Tracker.CursorRow++
+		Tracker.NeedsToRedraw = true
+	}
 }
 
 function DrawTracker() {
@@ -239,7 +267,7 @@ function DrawTracker() {
 	}
 
 	var ScrollOffset = Tracker.ScrollOffset
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Pattern = GetTrackerActivePattern()
 	var NumRows = Pattern.NumRows
 	var Rows = Pattern.Rows
 	var Y = 0
@@ -274,7 +302,7 @@ function HandleTrackerScrolling() {
 }
 
 function DrawTrackerRow(Index, Y) {
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Pattern = GetTrackerActivePattern()
 	var Row = Pattern.Rows[Index]
 	var X = Font.Width
 
@@ -346,4 +374,8 @@ function DrawNumber(Number, NumDigits, X, Y) {
 
 function DrawDigit(Digit, X, Y) {
 	DrawChar(Digit + 48, X, Y)
+}
+
+function GetTrackerActivePattern() {
+	return Tracker.Patterns[Tracker.ActivePattern]
 }
