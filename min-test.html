@@ -10,6 +10,7 @@
 		<script src="js/canvas.js"></script>
 		<script src="js/font.js"></script>
 		<script src="js/input.js"></script>
+		<script src="js/instruments.js"></script>
 		<script src="js/resources.js"></script>
 		<script src="js/synth.js"></script>
 		<script src="js/tracker.js"></script>
@@ -19,8 +20,12 @@
 			InitCanvas("view")
 			InitFont()
 			InitInput()
+			InitInstruments()
 			InitSynths(Tracker.NumTracks)
 			InitTracker()
+
+			Instruments[0].VcoBalance = 0.5
+			Instruments[0].Vco2Pitch = 0.01
 
 			WaitForResources(OnResourcesLoaded)
 

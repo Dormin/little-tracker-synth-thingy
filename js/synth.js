@@ -1,7 +1,7 @@
 "use strict"
 
 var Synth = {
-	GateTransitionTime: 0.003,
+	GateTransitionDuration: 0.003,
 	NumSynths: 0,
 	States: []
 }
@@ -10,10 +10,12 @@ function InitSynths(NumSynths) {
 	Synth.NumSynths = NumSynths
 	for (var i = 0; i < NumSynths; i++) {
 		Synth.States[i] = {
+			Instrument: 0,
 			Gate: 0,
 			TargetGate: 0,
-			Freq: 0,
-			Time: 0
+			Note: 0,
+			Vco1Time: 0,
+			Vco2Time: 0
 		}
 	}
 }
@@ -21,7 +23,7 @@ function InitSynths(NumSynths) {
 function SynthNoteOn(Index, Note) {
 	var State = Synth.States[Index]
 	State.TargetGate = 1
-	State.Freq = 440 * Math.pow(2, (Note - 57) / 12)
+	State.Note = Note - 57
 }
 
 function SynthNoteOff(Index) {
@@ -35,15 +37,27 @@ function SynthNoteOffAll() {
 	}
 }
 
+function SetSynthInstrument(Index, Instrument) {
+	var State = Synth.States[Index]
+	State.Instrument = Instrument
+}
+
 function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 	var SampleRate = Audio.SampleRate
-	var GateTransitionTime = Synth.GateTransitionTime
+	var GateTransitionDuration = Synth.GateTransitionDuration
 	var State = Synth.States[Index]
+	var Instrument = Instruments[State.Instrument]
+	var Gain = Instrument.Gain
+	var VcoBalance = Instrument.VcoBalance
+	var Vco2Pitch = Instrument.Vco2Pitch
 	var Gate = State.Gate
 	var TargetGate = State.TargetGate
-	var Freq = State.Freq
-	var Time = State.Time
-	var GateDelta = 1 / GateTransitionTime / SampleRate
+	var Note = State.Note
+	var Vco1Freq = 440 * Math.pow(2, Note / 12)
+	var Vco2Freq = 440 * Math.pow(2, Note / 12 + Vco2Pitch)
+	var Vco1Time = State.Vco1Time
+	var Vco2Time = State.Vco2Time
+	var GateDelta = 1 / GateTransitionDuration / SampleRate
 
 	for (var i = 0; i < NumSamples; i++) {
 		if (Gate > TargetGate) {
@@ -57,12 +71,17 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 				Gate = 1
 			}
 		}
-		var Sample = Gate * Math.sin(2 * Math.PI * Time)
-		Time += Freq / SampleRate
+		var Vco1Out = Math.sin(2 * Math.PI * Vco1Time)
+		var Vco2Out = Math.sin(2 * Math.PI * Vco2Time)
+		var VcoOut = Vco1Out * (1 - VcoBalance) + Vco2Out * VcoBalance
+		var Sample = Gate * Gain * VcoOut
+		Vco1Time += Vco1Freq / SampleRate
+		Vco2Time += Vco2Freq / SampleRate
 		OutputL[i] = Sample
 		OutputR[i] = Sample
 	}
 
 	State.Gate = Gate
-	State.Time = Time
+	State.Vco1Time = Vco1Time
+	State.Vco2Time = Vco2Time
 }
