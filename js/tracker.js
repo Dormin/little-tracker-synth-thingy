@@ -35,21 +35,21 @@ function InitTracker() {
 
 	for (var i = 0; i < Tracker.NumPatterns; i++) {
 		var NumRows = 64
-		var Rows = []
+		var Tracks = []
 
-		for (var j = 0; j < NumRows; j++) {
-			var Row = []
+		for (var j = 0; j < Tracker.NumTracks; j++) {
+			var Track = []
 
-			for (var k = 0; k < Tracker.NumTracks; k++) {
-				Row[k] = { Note: Tracker.NoteKeep }
+			for (var k = 0; k < NumRows; k++) {
+				Track[k] = { Note: Tracker.NoteKeep }
 			}
 
-			Rows[j] = Row
+			Tracks[j] = Track
 		}
 
 		Tracker.Patterns[i] = {
 			NumRows: NumRows,
-			Rows: Rows
+			Tracks: Tracks
 		}
 	}
 
@@ -75,7 +75,7 @@ function ProcessTracker(OutputL, OutputR, NumSamples) {
 }
 
 function ProcessTrackerPlaying(OutputL, OutputR, NumSamples) {
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
+	var Pattern = GetTrackerActivePattern()
 	var NumRows = Pattern.NumRows
 	var StepsPerSecond = 4 * Tracker.Bpm / 60
 	var SamplesPerStep = Audio.SampleRate / StepsPerSecond
@@ -105,12 +105,10 @@ function ProcessTrackerPlaying(OutputL, OutputR, NumSamples) {
 }
 
 function ProcessTrackerEvents() {
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
-	var Row = Pattern.Rows[Tracker.NextStep]
-	var NumTracks = Tracker.NumTracks
+	var Pattern = GetTrackerActivePattern()
 
-	for (var i = 0; i < NumTracks; i++) {
-		var Cell = Row[i]
+	for (var i = 0; i < Tracker.NumTracks; i++) {
+		var Cell = Pattern.Tracks[i][Tracker.NextStep]
 		var Note = Cell.Note
 
 		if (Note >= 0) {
@@ -159,9 +157,6 @@ function HandleTrackerPlayingInput(Event, Key) {
 function HandleTrackerEditingInput(Event, Key) {
 	var KeyToOctaveMap = Tracker.KeyToOctaveMap
 	var KeyToNoteMap = Tracker.KeyToNoteMap
-	var NumTracks = Tracker.NumTracks
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
-	var NumRows = Pattern.NumRows
 
 	if (Event === "Press" && Key === "Spacebar") {
 		TrackerPlay()
@@ -189,9 +184,7 @@ function HandleTrackerEditingInput(Event, Key) {
 		}
 	} else if (Event === "Release" && Tracker.CurrentKey === Key) {
 		Tracker.CurrentKey = null
-		for (var i = 0; i < Tracker.NumTracks; i++) {
-			SynthNoteOff(i)
-		}
+		SynthNoteOffAll()
 	}
 }
 
@@ -210,10 +203,7 @@ function TrackerStop() {
 }
 
 function TrackerChangeOctave(Octave) {
-	var Pattern = Tracker.Patterns[Tracker.ActivePattern]
-	var Row = Pattern.Rows[Tracker.CursorRow]
-	var Cell = Row[Tracker.CursorCol]
-
+	var Cell = GetTrackerSelectedCell()
 	Tracker.CurrentOctave = Octave
 	if (Cell.Note >= 0) {
 		Cell.Note = Octave * 12 + Cell.Note % 12
@@ -223,10 +213,7 @@ function TrackerChangeOctave(Octave) {
 }
 
 function TrackerInsertNote(Note) {
-	var Pattern = GetTrackerActivePattern()
-	var Row = Pattern.Rows[Tracker.CursorRow]
-	var Cell = Row[Tracker.CursorCol]
-
+	var Cell = GetTrackerSelectedCell()
 	Cell.Note = Note
 	TrackerMoveCursorDown()
 	Tracker.NeedsToRedraw = true
@@ -269,7 +256,6 @@ function DrawTracker() {
 	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = GetTrackerActivePattern()
 	var NumRows = Pattern.NumRows
-	var Rows = Pattern.Rows
 	var Y = 0
 
 	SetAlpha(1.0)
@@ -303,7 +289,6 @@ function HandleTrackerScrolling() {
 
 function DrawTrackerRow(Index, Y) {
 	var Pattern = GetTrackerActivePattern()
-	var Row = Pattern.Rows[Index]
 	var X = Font.Width
 
 	if (Tracker.IsPlaying && Index === Tracker.CursorRow) {
@@ -325,7 +310,7 @@ function DrawTrackerRow(Index, Y) {
 	X += 3 * Font.Width
 
 	for (var j = 0; j < Tracker.NumTracks; j++) {
-		var Cell = Row[j]
+		var Cell = Pattern.Tracks[j][Index]
 		var Char = 45
 
 		if (Index === Tracker.CursorRow && j === Tracker.CursorCol) {
@@ -374,6 +359,12 @@ function DrawNumber(Number, NumDigits, X, Y) {
 
 function DrawDigit(Digit, X, Y) {
 	DrawChar(Digit + 48, X, Y)
+}
+
+function GetTrackerSelectedCell() {
+	var Pattern = GetTrackerActivePattern()
+	var Track = Pattern.Tracks[Tracker.CursorCol]
+	return Track[Tracker.CursorRow]
 }
 
 function GetTrackerActivePattern() {
