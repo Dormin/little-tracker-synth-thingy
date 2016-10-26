@@ -173,6 +173,10 @@ function HandleTrackerEditingInput(Event, Key) {
 			TrackerInsertNote(Tracker.NoteKeep)
 		} else if (Key === "Period") {
 			TrackerInsertNote(Tracker.NoteCut)
+		} else if (Key === "Insert") {
+			TrackerPushNotes()
+		} else if (Key === "Delete") {
+			TrackerDeleteNote()
 		} else if (Key === "Left") {
 			TrackerMoveCursorLeft()
 		} else if (Key === "Right") {
@@ -216,6 +220,28 @@ function TrackerInsertNote(Note) {
 	var Cell = GetTrackerSelectedCell()
 	Cell.Note = Note
 	TrackerMoveCursorDown()
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerPushNotes() {
+	var Pattern = GetTrackerActivePattern()
+	var Track = Pattern.Tracks[Tracker.CursorCol]
+	var LastRow = Pattern.NumRows - 1
+	for (var i = LastRow; i > Tracker.CursorRow; i--) {
+		Track[i].Note = Track[i - 1].Note
+	}
+	Track[Tracker.CursorRow].Note = Tracker.NoteKeep
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerDeleteNote() {
+	var Pattern = GetTrackerActivePattern()
+	var Track = Pattern.Tracks[Tracker.CursorCol]
+	var LastRow = Pattern.NumRows - 1
+	for (var i = Tracker.CursorRow; i < LastRow; i++) {
+		Track[i].Note = Track[i + 1].Note
+	}
+	Track[LastRow].Note = Tracker.NoteKeep
 	Tracker.NeedsToRedraw = true
 }
 

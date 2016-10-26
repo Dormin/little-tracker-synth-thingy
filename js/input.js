@@ -68,6 +68,8 @@ function KeyCodeToString(KeyCode) {
 		case 38: return "Up"
 		case 39: return "Right"
 		case 40: return "Down"
+		case 45: return "Insert"
+		case 46: return "Delete"
 		case 189: return "Dash"
 		case 190: return "Period"
 	}
