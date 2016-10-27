@@ -11,6 +11,8 @@ var Tracker = {
 	},
 	NumTracks: 4,
 	NumPatterns: 16,
+	PageStepSize: 8,
+	ScrollMargin: 4,
 	NoteKeep: -1,
 	NoteCut: -2,
 	IsPlaying: false,
@@ -23,7 +25,6 @@ var Tracker = {
 	CurrentOctave: 4,
 	CurrentKey: null,
 	NumVisibleRows: 0,
-	ScrollMargin: 4,
 	ScrollOffset: 0,
 	NeedsToRedraw: true,
 	Tracks: [],
@@ -185,6 +186,14 @@ function HandleTrackerEditingInput(Event, Key) {
 			TrackerMoveCursorUp()
 		} else if (Key === "Down") {
 			TrackerMoveCursorDown()
+		} else if (Key === "Page Up") {
+			TrackerMoveCursorPageUp()
+		} else if (Key === "Page Down") {
+			TrackerMoveCursorPageDown()
+		} else if (Key === "End") {
+			TrackerMoveCursorToEnd()
+		} else if (Key === "Home") {
+			TrackerMoveCursorToBeginning()
 		}
 	} else if (Event === "Release" && Tracker.CurrentKey === Key) {
 		Tracker.CurrentKey = null
@@ -260,17 +269,49 @@ function TrackerMoveCursorRight() {
 }
 
 function TrackerMoveCursorUp() {
-	if (Tracker.CursorRow > 0) {
+	var FirstRow = 0
+	if (Tracker.CursorRow > FirstRow) {
 		Tracker.CursorRow--
 		Tracker.NeedsToRedraw = true
 	}
 }
 
 function TrackerMoveCursorDown() {
-	if (Tracker.CursorRow < GetTrackerActivePattern().NumRows - 1) {
+	var LastRow = GetTrackerActivePattern().NumRows - 1
+	if (Tracker.CursorRow < LastRow) {
 		Tracker.CursorRow++
 		Tracker.NeedsToRedraw = true
 	}
+}
+
+function TrackerMoveCursorPageDown() {
+	var LastRow = GetTrackerActivePattern().NumRows - 1
+	Tracker.CursorRow += Tracker.PageStepSize
+	if (Tracker.CursorRow > LastRow) {
+		Tracker.CursorRow = LastRow
+	}
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerMoveCursorPageUp() {
+	var FirstRow = 0
+	Tracker.CursorRow -= Tracker.PageStepSize
+	if (Tracker.CursorRow < FirstRow) {
+		Tracker.CursorRow = FirstRow
+	}
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerMoveCursorToEnd() {
+	var LastRow = GetTrackerActivePattern().NumRows - 1
+	Tracker.CursorRow = LastRow
+	Tracker.NeedsToRedraw = true
+}
+
+function TrackerMoveCursorToBeginning() {
+	var FirstRow = 0
+	Tracker.CursorRow = FirstRow
+	Tracker.NeedsToRedraw = true
 }
 
 function DrawTracker() {
