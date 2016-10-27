@@ -32,7 +32,7 @@ var Tracker = {
 }
 
 function InitTracker() {
-	Tracker.NumVisibleRows = Canvas.Height / Font.Height
+	Tracker.NumVisibleRows = Canvas.Height / Ui.FontHeight
 
 	for (var i = 0; i < Tracker.NumPatterns; i++) {
 		var NumRows = 64
@@ -333,7 +333,7 @@ function DrawTracker() {
 		if (i >= 0) {
 			DrawTrackerRow(i, Y)
 		}
-		Y += Font.Height
+		Y += Ui.FontHeight
 	}
 
 	Tracker.NeedsToRedraw = false
@@ -356,25 +356,25 @@ function HandleTrackerScrolling() {
 
 function DrawTrackerRow(Index, Y) {
 	var Pattern = GetTrackerActivePattern()
-	var X = Font.Width
+	var X = Ui.FontWidth
 
 	if (Tracker.IsPlaying && Index === Tracker.CursorRow) {
 		SetAlpha(1.0)
 		SetColor(57, 124, 172)
-		DrawRect(0, Y, Canvas.Width, Font.Height)
+		DrawRect(0, Y, Canvas.Width, Ui.FontHeight)
 	} else if (Index % 16 === 0) {
 		SetAlpha(1.0)
 		SetColor(71, 83, 108)
-		DrawRect(0, Y, Canvas.Width, Font.Height)
+		DrawRect(0, Y, Canvas.Width, Ui.FontHeight)
 	} else if (Index % 4 === 0) {
 		SetAlpha(1.0)
 		SetColor(63, 70, 90)
-		DrawRect(0, Y, Canvas.Width, Font.Height)
+		DrawRect(0, Y, Canvas.Width, Ui.FontHeight)
 	}
 
 	SetAlpha(0.5)
 	DrawNumber(Index, 2, X, Y)
-	X += 3 * Font.Width
+	X += 3 * Ui.FontWidth
 
 	for (var j = 0; j < Tracker.NumTracks; j++) {
 		var Cell = Pattern.Tracks[j][Index]
@@ -383,11 +383,11 @@ function DrawTrackerRow(Index, Y) {
 		if (Index === Tracker.CursorRow && j === Tracker.CursorCol) {
 			SetAlpha(1.0)
 			SetColor(240, 16, 32)
-			DrawRect(X, Y, 3 * Font.Width, Font.Height)
+			DrawRect(X, Y, 3 * Ui.FontWidth, Ui.FontHeight)
 		}
 
 		DrawTrackerNote(Cell.Note, X, Y)
-		X += 6 * Font.Width
+		X += 6 * Ui.FontWidth
 	}
 }
 
@@ -396,13 +396,13 @@ function DrawTrackerNote(Note, X, Y) {
 		var DashChar = 45
 		SetAlpha(0.25)
 		DrawChar(DashChar, X, Y)
-		DrawChar(DashChar, X + Font.Width, Y)
-		DrawChar(DashChar, X + 2 * Font.Width, Y)
+		DrawChar(DashChar, X + Ui.FontWidth, Y)
+		DrawChar(DashChar, X + 2 * Ui.FontWidth, Y)
 	} else if (Note === Tracker.NoteCut) {
 		SetAlpha(0.5)
 		DrawChar(67, X, Y)
-		DrawChar(85, X + Font.Width, Y)
-		DrawChar(84, X + 2 * Font.Width, Y)
+		DrawChar(85, X + Ui.FontWidth, Y)
+		DrawChar(84, X + 2 * Ui.FontWidth, Y)
 	} else {
 		var Octave = Note / 12 | 0
 		Note = (Note % 12 + 12) % 12
@@ -410,22 +410,9 @@ function DrawTrackerNote(Note, X, Y) {
 		var SharpChar = [45, 35, 45, 35, 45, 45, 35, 45, 35, 45, 35, 45][Note]
 		SetAlpha(1.0)
 		DrawChar(NoteChar, X, Y)
-		DrawChar(SharpChar, X + Font.Width, Y)
-		DrawDigit(Octave, X + 2 * Font.Width, Y)
+		DrawChar(SharpChar, X + Ui.FontWidth, Y)
+		DrawDigit(Octave, X + 2 * Ui.FontWidth, Y)
 	}
-}
-
-function DrawNumber(Number, NumDigits, X, Y) {
-	X += NumDigits * Font.Width
-	for (var i = 0; i < NumDigits; i++) {
-		X -= Font.Width
-		DrawDigit(Number % 10, X, Y)
-		Number = Number / 10 | 0
-	}
-}
-
-function DrawDigit(Digit, X, Y) {
-	DrawChar(Digit + 48, X, Y)
 }
 
 function GetTrackerSelectedCell() {
