@@ -11,6 +11,7 @@ var Tracker = {
 	},
 	NumTracks: 4,
 	NumPatterns: 16,
+	PositionY: 12,
 	PageStepSize: 8,
 	ScrollMargin: 4,
 	NoteKeep: -1,
@@ -32,7 +33,7 @@ var Tracker = {
 }
 
 function InitTracker() {
-	Tracker.NumVisibleRows = Canvas.Height / Ui.FontHeight
+	Tracker.NumVisibleRows = (Canvas.Height - Tracker.PositionY) / Ui.FontHeight
 
 	for (var i = 0; i < Tracker.NumPatterns; i++) {
 		var NumRows = 64
@@ -320,16 +321,17 @@ function DrawTracker() {
 		return
 	}
 
+	var NumVisibleRows = Tracker.NumVisibleRows
 	var ScrollOffset = Tracker.ScrollOffset
 	var Pattern = GetTrackerActivePattern()
 	var NumRows = Pattern.NumRows
-	var Y = 0
+	var Y = Tracker.PositionY
 
 	SetAlpha(1.0)
 	SetColor(54, 57, 73)
-	DrawRect(0, 0, Canvas.Width, Canvas.Height)
+	DrawRect(0, Y, Canvas.Width, Canvas.Height - Y)
 
-	for (var i = ScrollOffset; i < ScrollOffset + NumRows && i < NumRows; i++) {
+	for (var i = ScrollOffset; i < ScrollOffset + NumVisibleRows && i < NumRows; i++) {
 		if (i >= 0) {
 			DrawTrackerRow(i, Y)
 		}

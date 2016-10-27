@@ -1,6 +1,9 @@
 "use strict"
 
-var App = {}
+var App = {
+	ToolbarHeight: 12,
+	NeedsToRedraw: true
+}
 
 function InitApp() {
 
@@ -16,4 +19,8 @@ function HandleAppInput(Event, Key) {
 
 function DrawApp() {
 	DrawTracker()
+	if (App.NeedsToRedraw) {
+		DrawPanel(0, 0, Canvas.Width, App.ToolbarHeight)
+		DrawString("BPM:120  >  PLAY:PATT EDIT:TRCK", 3, 3)
+	}
 }

@@ -10,6 +10,27 @@ function InitUi() {
 	Ui.FontImage = LoadImage("img/font.png")
 }
 
+function DrawPanel(X, Y, Width, Height) {
+	SetAlpha(1)
+	SetColor(71, 83, 108)
+	DrawRect(X, Y, Width, Height)
+	SetColor(57, 124, 172)
+	DrawRect(X, Y, Width, 1)
+	DrawRect(X, Y, 1, Height)
+	SetColor(45, 46, 57)
+	DrawRect(X, Y + Height - 1, Width, 1)
+	DrawRect(X + Width - 1, Y, 1, Height)
+}
+
+function DrawString(String, X, Y) {
+	var Length = String.length
+	for (var i = 0; i < Length; i++) {
+		var Char = String.charCodeAt(i)
+		DrawChar(Char, X, Y)
+		X += Ui.FontWidth
+	}
+}
+
 function DrawNumber(Number, NumDigits, X, Y) {
 	X += NumDigits * Ui.FontWidth
 	for (var i = 0; i < NumDigits; i++) {
