@@ -5,6 +5,7 @@
 	</head>
 	<body style="padding:16px;background-color:#2d2e39">
 		<canvas id="view" width="192" height="144" style="width:384px;height:288px;display:block;margin:auto;image-rendering:pixelated;box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.5)"></canvas>
+		<script src="js/app.js"></script>
 		<script src="js/audio.js"></script>
 		<script src="js/buffer.js"></script>
 		<script src="js/canvas.js"></script>
@@ -23,7 +24,7 @@
 			InitInstruments()
 			InitSynths(Tracker.NumTracks)
 			InitTracker()
-			
+			InitApp()
 
 			Instruments[0].VcoBalance = 0.5
 			Instruments[0].Vco2Pitch = 0.01
@@ -31,21 +32,9 @@
 			WaitForResources(OnResourcesLoaded)
 
 			function OnResourcesLoaded() {
-				StartAudio(OnProcess)
-				StartDrawing(OnDraw)
-				StartInput(OnInput)
-			}
-
-			function OnProcess(OutputL, OutputR, NumSamples) {
-				ProcessTracker(OutputL, OutputR, NumSamples)
-			}
-
-			function OnDraw() {
-				DrawTracker()
-			}
-
-			function OnInput(Event, Key) {
-				HandleTrackerInput(Event, Key)
+				StartAudio(ProcessApp)
+				StartDrawing(DrawApp)
+				StartInput(HandleAppInput)
 			}
 
 		</script>
