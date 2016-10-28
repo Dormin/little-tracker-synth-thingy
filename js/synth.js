@@ -47,8 +47,7 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 	var GateTransitionDuration = Synth.GateTransitionDuration
 	var State = Synth.States[Index]
 	var Instrument = Instruments[State.Instrument]
-	var Gain = Instrument.Gain
-	var VcoBalance = Instrument.VcoBalance
+	var Volume = Instrument.Volume
 	var Vco2Pitch = Instrument.Vco2Pitch
 	var Gate = State.Gate
 	var TargetGate = State.TargetGate
@@ -73,8 +72,8 @@ function ProcessSynth(Index, OutputL, OutputR, NumSamples) {
 		}
 		var Vco1Out = Math.sin(2 * Math.PI * Vco1Time)
 		var Vco2Out = Math.sin(2 * Math.PI * Vco2Time)
-		var VcoOut = Vco1Out * (1 - VcoBalance) + Vco2Out * VcoBalance
-		var Sample = Gate * Gain * VcoOut
+		var VcoOut = (Vco1Out + Vco2Out) / 2
+		var Sample = Gate * Volume * VcoOut
 		Vco1Time += Vco1Freq / SampleRate
 		Vco2Time += Vco2Freq / SampleRate
 		OutputL[i] = Sample

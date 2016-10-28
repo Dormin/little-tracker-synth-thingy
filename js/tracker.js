@@ -11,7 +11,7 @@ var Tracker = {
 	},
 	NumTracks: 4,
 	NumPatterns: 16,
-	PositionY: 12,
+	PositionY: 48,
 	PageStepSize: 8,
 	ScrollMargin: 4,
 	NoteKeep: -1,
@@ -33,7 +33,7 @@ var Tracker = {
 }
 
 function InitTracker() {
-	Tracker.NumVisibleRows = (Canvas.Height - Tracker.PositionY) / Ui.FontHeight
+	Tracker.NumVisibleRows = Math.floor((Canvas.Height - Tracker.PositionY) / Ui.FontHeight)
 
 	for (var i = 0; i < Tracker.NumPatterns; i++) {
 		var NumRows = 64

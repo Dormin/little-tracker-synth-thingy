@@ -18,9 +18,12 @@ function HandleAppInput(Event, Key) {
 }
 
 function DrawApp() {
-	DrawTracker()
+	
 	if (App.NeedsToRedraw) {
 		DrawPanel(0, 0, Canvas.Width, App.ToolbarHeight)
-		DrawString("BPM:120  >  PLAY:PATT EDIT:TRCK", 3, 3)
+		DrawString("BPM 120 SWING 50  >", 3, 3)
+		App.NeedsToRedraw = false
 	}
+	DrawInstrumentEditor()
+	DrawTracker()
 }

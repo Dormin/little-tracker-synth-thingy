@@ -22,6 +22,14 @@ function DrawPanel(X, Y, Width, Height) {
 	DrawRect(X + Width - 1, Y, 1, Height)
 }
 
+function DrawHSeparator(X, Y, Width) {
+	DrawPanel(X, Y, Width, 2)
+}
+
+function DrawVSeparator(X, Y, Height) {
+	DrawPanel(X, Y, 2, Height)
+}
+
 function DrawString(String, X, Y) {
 	var Length = String.length
 	for (var i = 0; i < Length; i++) {
