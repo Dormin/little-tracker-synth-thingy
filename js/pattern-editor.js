@@ -16,7 +16,7 @@ var PatternEditor = {
 	CurrentOctave: 4,
 	CurrentKey: null,
 	NeedsToRedraw: true,
-	PositionY: 48,
+	PositionY: 60,
 	NumVisibleRows: 0,
 	ScrollMargin: 4,
 	ScrollOffset: 0
@@ -174,10 +174,13 @@ function DrawPatternEditor() {
 	var RowHeight = Ui.FontHeight
 	var X = 0
 	var Y = PatternEditor.PositionY
+	var Width = Canvas.Width
+	var Height = Canvas.Height - Y
 
 	SetAlpha(1.0)
-	SetColor(54, 57, 73)
-	DrawRect(0, Y, Canvas.Width, Canvas.Height - Y)
+	SetColor(0, 0, 0)
+	//SetColor(54, 57, 73)
+	DrawRect(X, Y, Width, Height)
 
 	for (var Row = ScrollOffset; Row < LastVisibleRow && Row < NumRows; Row++) {
 		if (Row >= 0) {
@@ -217,11 +220,11 @@ function DrawPatternEditorRow(Row, X, Y) {
 		SetColor(57, 124, 172)
 		DrawRect(0, Y, Canvas.Width, RowHeight)
 	} else if (Row % 16 === 0) {
-		SetAlpha(1.0)
+		SetAlpha(0.5)
 		SetColor(71, 83, 108)
 		DrawRect(0, Y, Canvas.Width, RowHeight)
 	} else if (Row % 4 === 0) {
-		SetAlpha(1.0)
+		SetAlpha(0.5)
 		SetColor(63, 70, 90)
 		DrawRect(0, Y, Canvas.Width, RowHeight)
 	}

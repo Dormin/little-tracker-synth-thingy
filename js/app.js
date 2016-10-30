@@ -15,6 +15,8 @@ function InitApp() {
 	InitPatterns()
 	InitPatternEditor()
 	InitPatternPlayer()
+	InitSong()
+	InitSongEditor()
 	InitSynths()
 }
 
@@ -62,5 +64,6 @@ function DrawApp() {
 		App.NeedsToRedraw = false
 	}
 	DrawInstrumentEditor()
+	DrawSongEditor()
 	DrawPatternEditor()
 }

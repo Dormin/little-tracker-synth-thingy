@@ -14,6 +14,19 @@ function DrawPanel(X, Y, Width, Height) {
 	SetAlpha(1)
 	SetColor(71, 83, 108)
 	DrawRect(X, Y, Width, Height)
+	DrawOuterBorder(X, Y, Width, Height)
+}
+
+function DrawHSeparator(X, Y, Width) {
+	DrawOuterBorder(X, Y, Width, 2)
+}
+
+function DrawVSeparator(X, Y, Height) {
+	DrawOuterBorder(X, Y, 2, Height)
+}
+
+function DrawOuterBorder(X, Y, Width, Height) {
+	SetAlpha(1)
 	SetColor(57, 124, 172)
 	DrawRect(X, Y, Width, 1)
 	DrawRect(X, Y, 1, Height)
@@ -22,12 +35,14 @@ function DrawPanel(X, Y, Width, Height) {
 	DrawRect(X + Width - 1, Y, 1, Height)
 }
 
-function DrawHSeparator(X, Y, Width) {
-	DrawPanel(X, Y, Width, 2)
-}
-
-function DrawVSeparator(X, Y, Height) {
-	DrawPanel(X, Y, 2, Height)
+function DrawInnerBorder(X, Y, Width, Height) {
+	SetAlpha(1)
+	SetColor(45, 46, 57)
+	DrawRect(X, Y, Width, 1)
+	DrawRect(X, Y, 1, Height)
+	SetColor(57, 124, 172)
+	DrawRect(X, Y + Height - 1, Width, 1)
+	DrawRect(X + Width - 1, Y, 1, Height)
 }
 
 function DrawString(String, X, Y) {
