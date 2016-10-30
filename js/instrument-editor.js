@@ -7,6 +7,10 @@ var InstrumentEditor = {
 	NeedsToRedraw: true
 }
 
+function InitInstrumentEditor() {
+	
+}
+
 function DrawInstrumentEditor() {
 	if (!InstrumentEditor.NeedsToRedraw) {
 		return

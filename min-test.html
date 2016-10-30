@@ -9,25 +9,23 @@
 		<script src="js/audio.js"></script>
 		<script src="js/buffer.js"></script>
 		<script src="js/canvas.js"></script>
+		<script src="js/constants.js"></script>
 		<script src="js/input.js"></script>
 		<script src="js/instrument-editor.js"></script>
 		<script src="js/instruments.js"></script>
+		<script src="js/mixer.js"></script>
+		<script src="js/pattern-editor.js"></script>
+		<script src="js/pattern-player.js"></script>
+		<script src="js/patterns.js"></script>
 		<script src="js/resources.js"></script>
 		<script src="js/synth.js"></script>
-		<script src="js/tracker.js"></script>
 		<script src="js/ui.js"></script>
 		<script>
 
 			InitAudio()
 			InitCanvas("view")
 			InitInput()
-			InitUi()
-			InitInstruments()
-			InitSynths(Tracker.NumTracks)
-			InitTracker()
 			InitApp()
-
-			Instruments[0].Vco2Pitch = 0.01
 
 			WaitForResources(OnResourcesLoaded)
 

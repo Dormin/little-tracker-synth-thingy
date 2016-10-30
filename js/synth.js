@@ -6,9 +6,9 @@ var Synth = {
 	States: []
 }
 
-function InitSynths(NumSynths) {
-	Synth.NumSynths = NumSynths
-	for (var i = 0; i < NumSynths; i++) {
+function InitSynths() {
+	Synth.NumSynths = Constants.NumTracks
+	for (var i = 0; i < Synth.NumSynths; i++) {
 		Synth.States[i] = {
 			Instrument: 0,
 			Gate: 0,
