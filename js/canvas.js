@@ -3,6 +3,8 @@
 var Canvas = {
 	Width: 0,
 	Height: 0,
+	PixelWidth: 0,
+	PixelHeight: 0,
 	OnDraw: null,
 	Context: null
 }
@@ -12,7 +14,17 @@ function InitCanvas(ElementId) {
 	var Context = Element.getContext("2d")
 	Canvas.Width = Element.width
 	Canvas.Height = Element.height
+	Canvas.PixelWidth = Element.clientWidth / Element.width
+	Canvas.PixelHeight = Element.clientHeight / Element.height
 	Canvas.Context = Context
+}
+
+function GetCanvasPositionX() {
+	return Canvas.Context.canvas.offsetLeft
+}
+
+function GetCanvasPositionY() {
+	return Canvas.Context.canvas.offsetTop
 }
 
 function StartDrawing(OnDraw) {
