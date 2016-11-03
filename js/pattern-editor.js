@@ -10,6 +10,7 @@ var PatternEditor = {
 		"Y": 8, "H": 9, "U": 10, "J": 11, "K": 12, "O": 13, "L": 14, "P": 15
 	},
 	PageStepSize: 8,
+	IsActive: true,
 	WorkingTrack: 0,
 	CurrentOctave: 4,
 	CurrentKey: null,
@@ -26,7 +27,23 @@ function InitPatternEditor() {
 }
 
 function HandlePatternEditorInput(Event, Key) {
+	if (Event === "Press" && Key === "Mouse") {
+		var X = Input.MouseX
+		var Y = Input.MouseY
+		var Left = 0
+		var Right = Canvas.Width
+		var Top = PatternEditor.PositionY
+		var Bottom = Canvas.Height
+		PatternEditor.IsActive = X >= Left && X < Right && Y >= Top && Y < Bottom
+		PatternEditor.NeedsToRedraw = true
+	}
+
 	if (SongPlayer.IsPlaying) {
+		return
+	}
+
+	if (!PatternEditor.IsActive) {
+		SynthNoteOffAll()
 		return
 	}
 
@@ -231,10 +248,13 @@ function DrawPatternEditorRow(Row, X, Y) {
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
 		var Cell = GetPatternEditorCell(Track, Row)
 
-		if (!SongPlayer.IsPlaying && Row === Song.PatternStep &&
-			Track === PatternEditor.WorkingTrack) {
+		if (Row === Song.PatternStep && Track === PatternEditor.WorkingTrack) {
 			SetAlpha(1.0)
-			SetColor(240, 16, 32)
+			if (PatternEditor.IsActive) {
+				SetColor(240, 16, 32)
+			} else {
+				SetColor(57, 124, 172)
+			}
 			DrawRect(X, Y, 3 * CharWidth, RowHeight)
 		}
 
