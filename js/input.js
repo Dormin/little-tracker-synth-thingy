@@ -3,6 +3,8 @@
 var Input = {
 	RepeatDelay: 0.5,
 	RepeatStep: 0.05,
+	MouseX: 0,
+	MouseY: 0,
 	OnInput: null,
 	IsHeldNext: {},
 	IsHeld: {},
@@ -20,35 +22,44 @@ function InitInput() {
 
 function StartInput(OnInput) {
 	Input.OnInput = OnInput
-	document.body.onkeydown = OnKeyDown
-	document.body.onkeyup = OnKeyUp
-	document.body.onmousedown = OnMouseDown
-	document.body.onmouseup = OnMouseUp
+	window.onkeydown = OnKeyDown
+	window.onkeyup = OnKeyUp
+	window.onmousedown = OnMouseDown
+	window.onmouseup = OnMouseUp
+	window.onmousemove = OnMouseMove
 }
 
 function OnKeyDown(Event) {
 	var Key = KeyCodeToString(Event.keyCode)
-	HandleKeyDown(Key, 0, 0)
+	HandleKeyDown(Key)
 }
 
 function OnKeyUp(Event) {
 	var Key = KeyCodeToString(Event.keyCode)
-	HandleKeyUp(Key, 0, 0)
+	HandleKeyUp(Key)
 }
 
 function OnMouseDown(Event) {
-	var X = Math.floor((Event.pageX - GetCanvasPositionX()) / Canvas.PixelWidth)
-	var Y = Math.floor((Event.pageY - GetCanvasPositionY()) / Canvas.PixelHeight)
-	HandleKeyDown("Mouse", X, Y)
+	UpdateMousePosition(Event)
+	HandleKeyDown("Mouse")
 }
 
 function OnMouseUp(Event) {
-	var X = Math.floor((Event.pageX - GetCanvasPositionX()) / Canvas.PixelWidth)
-	var Y = Math.floor((Event.pageY - GetCanvasPositionY()) / Canvas.PixelHeight)
-	HandleKeyUp("Mouse", X, Y)
+	UpdateMousePosition(Event)
+	HandleKeyUp("Mouse")
 }
 
-function HandleKeyDown(Key, X, Y) {
+function OnMouseMove(Event) {
+	UpdateMousePosition(Event)
+}
+
+function UpdateMousePosition(Event) {
+	Input.MouseX = Math.floor((Event.pageX - GetCanvasPositionX()) / Canvas.PixelWidth)
+	Input.MouseY = Math.floor((Event.pageY - GetCanvasPositionY()) / Canvas.PixelHeight)
+	console.log(Input.MouseX + " " + Input.MouseY)
+}
+
+function HandleKeyDown(Key) {
 	var Time = performance.now() / 1000
 	
 	if (!Input.IsHeld[Key]) {
@@ -56,24 +67,24 @@ function HandleKeyDown(Key, X, Y) {
 		Input.LastPressed = Key
 		Input.RepeatTime = Input.RepeatDelay
 		Input.Time = Time
-		Input.OnInput("Press", Key, X, Y)
+		Input.OnInput("Press", Key)
 	} else if (Input.LastPressed === Key) {
 		var DeltaTime = Time - Input.Time
 		Input.Time = Time
 		Input.RepeatTime -= DeltaTime
 		if (Input.RepeatTime <= 0) {
 			Input.RepeatTime += Input.RepeatStep
-			Input.OnInput("Repeat", Key, X, Y)
+			Input.OnInput("Repeat", Key)
 		}
 	}
 }
 
-function HandleKeyUp(Key, X, Y) {
+function HandleKeyUp(Key) {
 	Input.IsHeld[Key] = false
 	if (Input.LastPressed === Key) {
 		Input.LastPressed = null
 	}
-	Input.OnInput("Release", Key, X, Y)
+	Input.OnInput("Release", Key)
 }
 
 function KeyCodeToString(KeyCode) {

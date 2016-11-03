@@ -45,7 +45,7 @@ function ProcessApp(OutputL, OutputR, NumSamples) {
 	}
 }
 
-function HandleAppInput(Event, Key, X, Y) {
+function HandleAppInput(Event, Key) {
 	if (Event === "Press" && Key === "Spacebar") {
 		if (PatternPlayer.IsPlaying) {
 			StopPatternPlayer()
@@ -53,7 +53,7 @@ function HandleAppInput(Event, Key, X, Y) {
 			StartPatternPlayer()
 		}
 	} else {
-		HandlePatternEditorInput(Event, Key, X, Y)
+		HandlePatternEditorInput(Event, Key)
 	}
 }
 
