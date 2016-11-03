@@ -51,6 +51,7 @@ function HandleAppInput(Event, Key) {
 			StartSongPlayer()
 		}
 	} else {
+		HandleSequenceEditorInput(Event, Key)
 		HandlePatternEditorInput(Event, Key)
 	}
 }

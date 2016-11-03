@@ -30,7 +30,15 @@ function InitSong() {
 	}
 }
 
+function SetSongSequencePattern(Step, Pattern) {
+	Song.Sequence[Step] = Pattern
+}
+
+function GetSongSequencePattern() {
+	return Song.Sequence[Song.SequenceStep]
+}
+
 function GetSongPatternCell(Track, Step) {
-	var Pattern = Song.Sequence[Song.SequenceStep]
+	var Pattern = GetSongSequencePattern()
 	return Song.Patterns[Pattern].Tracks[Track][Step]
 }
