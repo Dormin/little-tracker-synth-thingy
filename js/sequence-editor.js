@@ -1,24 +1,24 @@
 "use strict"
 
-var SongEditor = {
+var SequenceEditor = {
 	PositionY: 48,
 	Height: 12,
 	NeedsToRedraw: true
 }
 
-function InitSongEditor() {
+function InitSequenceEditor() {
 
 }
 
-function DrawSongEditor() {
-	if (!SongEditor.NeedsToRedraw) {
+function DrawSequenceEditor() {
+	if (!SequenceEditor.NeedsToRedraw) {
 		return
 	}
 
 	var X = 0
-	var Y = SongEditor.PositionY
+	var Y = SequenceEditor.PositionY
 	var Width = Canvas.Width
-	var Height = SongEditor.Height
+	var Height = SequenceEditor.Height
 
 	SetAlpha(1)
 	SetColor(0, 0, 0)
@@ -32,5 +32,5 @@ function DrawSongEditor() {
 
 	DrawString("A A B C", X + 9, Y + 3)
 
-	SongEditor.NeedsToRedraw = false
+	SequenceEditor.NeedsToRedraw = false
 }

@@ -2,7 +2,6 @@
 
 var App = {
 	ToolbarHeight: 12,
-	Bpm: 120,
 	SamplesLeftInStep: 0,
 	NeedsToRedraw: true
 }
@@ -12,24 +11,23 @@ function InitApp() {
 	InitMixer()
 	InitInstruments()
 	InitInstrumentEditor()
-	InitPatterns()
 	InitPatternEditor()
-	InitPatternPlayer()
+	InitSequenceEditor()
 	InitSong()
-	InitSongEditor()
+	InitSongPlayer()
 	InitSynths()
 }
 
 function ProcessApp(OutputL, OutputR, NumSamples) {
-	var StepsPerSecond = 4 * App.Bpm / 60
+	var StepsPerSecond = 4 * Song.Bpm / 60
 	var SamplesPerStep = Audio.SampleRate / StepsPerSecond
 	var SamplesLeftInBuffer = NumSamples
 	var Offset = 0
 
 	while (SamplesLeftInBuffer > 0) {
 		if (App.SamplesLeftInStep <= 0) {
-			if (PatternPlayer.IsPlaying) {
-				HandlePatternPlayerStep()
+			if (SongPlayer.IsPlaying) {
+				HandleSongPlayerStep()
 			}
 			App.SamplesLeftInStep += SamplesPerStep
 			PatternEditor.NeedsToRedraw = true
@@ -47,10 +45,10 @@ function ProcessApp(OutputL, OutputR, NumSamples) {
 
 function HandleAppInput(Event, Key) {
 	if (Event === "Press" && Key === "Spacebar") {
-		if (PatternPlayer.IsPlaying) {
-			StopPatternPlayer()
+		if (SongPlayer.IsPlaying) {
+			StopSongPlayer()
 		} else {
-			StartPatternPlayer()
+			StartSongPlayer()
 		}
 	} else {
 		HandlePatternEditorInput(Event, Key)
@@ -64,6 +62,6 @@ function DrawApp() {
 		App.NeedsToRedraw = false
 	}
 	DrawInstrumentEditor()
-	DrawSongEditor()
+	DrawSequenceEditor()
 	DrawPatternEditor()
 }

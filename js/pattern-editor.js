@@ -10,9 +10,7 @@ var PatternEditor = {
 		"Y": 8, "H": 9, "U": 10, "J": 11, "K": 12, "O": 13, "L": 14, "P": 15
 	},
 	PageStepSize: 8,
-	ActivePattern: 0,
-	CursorTrack: 0,
-	CursorStep: 0,
+	WorkingTrack: 0,
 	CurrentOctave: 4,
 	CurrentKey: null,
 	NeedsToRedraw: true,
@@ -27,12 +25,8 @@ function InitPatternEditor() {
 	PatternEditor.NumVisibleRows = Math.floor(Height / Ui.FontHeight)
 }
 
-function SetPatternEditorPattern(Pattern) {
-	PatternEditor.ActivePattern = Pattern
-}
-
 function HandlePatternEditorInput(Event, Key) {
-	if (PatternPlayer.IsPlaying) {
+	if (SongPlayer.IsPlaying) {
 		return
 	}
 
@@ -47,7 +41,7 @@ function HandlePatternEditorInput(Event, Key) {
 			var Note = PatternEditor.CurrentOctave * 12 + KeyToNoteMap[Key]
 			InsertPatternEditorNote(Note)
 			PatternEditor.CurrentKey = Key
-			SynthNoteOn(PatternEditor.CursorTrack, Note)
+			SynthNoteOn(PatternEditor.WorkingTrack, Note)
 		} else if (Key === "Dash") {
 			InsertPatternEditorNote(Constants.NoteKeep)
 		} else if (Key === "Period") {
@@ -97,9 +91,9 @@ function InsertPatternEditorNote(Note) {
 }
 
 function PushPatternEditorNotes() {
-	var Track = PatternEditor.CursorTrack
+	var Track = PatternEditor.WorkingTrack
 	var LastStep = Constants.MaxPatternLength - 1
-	for (var Step = LastStep; Step > PatternEditor.CursorStep; Step--) {
+	for (var Step = LastStep; Step > Song.PatternStep; Step--) {
 		var Cell1 = GetPatternEditorCell(Track, Step)
 		var Cell2 = GetPatternEditorCell(Track, Step - 1)
 		Cell1.Note = Cell2.Note
@@ -109,9 +103,9 @@ function PushPatternEditorNotes() {
 }
 
 function DeletePatternEditorNote() {
-	var Track = PatternEditor.CursorTrack
+	var Track = PatternEditor.WorkingTrack
 	var LastStep = Constants.MaxPatternLength - 1
-	for (var Step = PatternEditor.CursorStep; Step < LastStep; Step++) {
+	for (var Step = Song.PatternStep; Step < LastStep; Step++) {
 		var Cell1 = GetPatternEditorCell(Track, Step)
 		var Cell2 = GetPatternEditorCell(Track, Step + 1)
 		Cell1.Note = Cell2.Note
@@ -145,20 +139,20 @@ function MovePatternEditorCursorPageDown() {
 }
 
 function MovePatternEditorCursorToEnd() {
-	PatternEditor.CursorStep = Constants.MaxPatternLength - 1
+	Song.PatternStep = Constants.MaxPatternLength - 1
 	PatternEditor.NeedsToRedraw = true
 }
 
 function MovePatternEditorCursorToBeginning() {
-	PatternEditor.CursorStep = 0
+	Song.PatternStep = 0
 	PatternEditor.NeedsToRedraw = true
 }
 
 function MovePatternEditorCursor(DTracks, DSteps) {
 	var LastTrack = Constants.NumTracks - 1
 	var LastStep = Constants.MaxPatternLength - 1
-	PatternEditor.CursorTrack = Clamp(PatternEditor.CursorTrack + DTracks, 0, LastTrack)
-	PatternEditor.CursorStep = Clamp(PatternEditor.CursorStep + DSteps, 0, LastStep)
+	PatternEditor.WorkingTrack = Clamp(PatternEditor.WorkingTrack + DTracks, 0, LastTrack)
+	Song.PatternStep = Clamp(Song.PatternStep + DSteps, 0, LastStep)
 	PatternEditor.NeedsToRedraw = true
 }
 
@@ -193,7 +187,7 @@ function DrawPatternEditor() {
 }
 
 function HandlePatternEditorScrolling() {
-	var Step = PatternPlayer.IsPlaying ? PatternPlayer.CurrentStep : PatternEditor.CursorStep
+	var Step = Song.PatternStep
 	var NumVisibleRows = PatternEditor.NumVisibleRows
 	var ScrollOffset = PatternEditor.ScrollOffset
 	var ScrollMargin = PatternEditor.ScrollMargin
@@ -215,7 +209,7 @@ function DrawPatternEditorRow(Row, X, Y) {
 	var CharWidth = Ui.FontWidth
 	var RowHeight = Ui.FontHeight
 
-	if (PatternPlayer.IsPlaying && Row === PatternPlayer.CurrentStep) {
+	if (SongPlayer.IsPlaying && Row === Song.PatternStep) {
 		SetAlpha(1.0)
 		SetColor(57, 124, 172)
 		DrawRect(0, Y, Canvas.Width, RowHeight)
@@ -237,8 +231,8 @@ function DrawPatternEditorRow(Row, X, Y) {
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
 		var Cell = GetPatternEditorCell(Track, Row)
 
-		if (!PatternPlayer.IsPlaying && Row === PatternEditor.CursorStep &&
-			Track === PatternEditor.CursorTrack) {
+		if (!SongPlayer.IsPlaying && Row === Song.PatternStep &&
+			Track === PatternEditor.WorkingTrack) {
 			SetAlpha(1.0)
 			SetColor(240, 16, 32)
 			DrawRect(X, Y, 3 * CharWidth, RowHeight)
@@ -269,14 +263,13 @@ function DrawPatternEditorNote(Note, X, Y) {
 }
 
 function GetPatternEditorSelectedCell() {
-	var Track = PatternEditor.CursorTrack
-	var Step = PatternEditor.CursorStep
+	var Track = PatternEditor.WorkingTrack
+	var Step = Song.PatternStep
 	return GetPatternEditorCell(Track, Step)
 }
 
 function GetPatternEditorCell(Track, Step) {
-	var Pattern = PatternEditor.ActivePattern
-	return GetPatternCell(Pattern, Track, Step)
+	return GetSongPatternCell(Track, Step)
 }
 
 function Clamp(Value, Lower, Upper) {
