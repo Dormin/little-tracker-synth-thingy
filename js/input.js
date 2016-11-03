@@ -51,12 +51,12 @@ function OnMouseUp(Event) {
 
 function OnMouseMove(Event) {
 	UpdateMousePosition(Event)
+	Input.OnInput("Move", "Mouse")
 }
 
 function UpdateMousePosition(Event) {
 	Input.MouseX = Math.floor((Event.pageX - GetCanvasPositionX()) / Canvas.PixelWidth)
 	Input.MouseY = Math.floor((Event.pageY - GetCanvasPositionY()) / Canvas.PixelHeight)
-	console.log(Input.MouseX + " " + Input.MouseY)
 }
 
 function HandleKeyDown(Key) {
