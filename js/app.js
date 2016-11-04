@@ -8,14 +8,13 @@ var App = {
 
 function InitApp() {
 	InitUi()
-	InitMixer()
 	InitInstruments()
 	InitInstrumentEditor()
 	InitPatternEditor()
 	InitSequenceEditor()
 	InitSong()
 	InitSongPlayer()
-	InitSynths()
+	InitSynth()
 }
 
 function ProcessApp(OutputL, OutputR, NumSamples) {
@@ -36,7 +35,7 @@ function ProcessApp(OutputL, OutputR, NumSamples) {
 		var NumSamplesToProcess = Math.min(SamplesLeftInBuffer,
 			Math.ceil(App.SamplesLeftInStep))
 
-		ProcessMixer(OutputL, OutputR, NumSamplesToProcess, Offset)
+		ProcessSynth(OutputL, OutputR, NumSamplesToProcess, Offset)
 		Offset += NumSamplesToProcess
 		App.SamplesLeftInStep -= NumSamplesToProcess
 		SamplesLeftInBuffer -= NumSamplesToProcess
