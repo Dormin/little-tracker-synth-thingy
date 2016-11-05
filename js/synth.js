@@ -2,31 +2,29 @@
 
 var Synth = {
 	GateTransitionDuration: 0.003,
-	NumSynths: 0,
-	Tracks: []
+	Instrument: [],
+	Gate: [],
+	TargetGate: []
 }
 
 function InitSynth() {
 	InitSynthEg()
 	InitSynthVco()
 	InitSynthVcf()
-	Synth.NumSynths = Constants.NumTracks
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
-		Synth.Tracks[Track] = {
-			Instrument: 0,
-			Gate: 0,
-			TargetGate: 0
-		}
+		Synth.Instrument[Track] = 0
+		Synth.Gate[Track] = 0
+		Synth.TargetGate[Track] = 0
 	}
 }
 
 function SynthNoteOn(Track, Note) {
-	Synth.Tracks[Track].TargetGate = 1
-	SynthVco.Tracks[Track].Note = Note - 57
+	Synth.TargetGate[Track] = 1
+	SynthVco.Note[Track] = Note - 57
 }
 
 function SynthNoteOff(Track) {
-	Synth.Tracks[Track].TargetGate = 0
+	Synth.TargetGate[Track] = 0
 }
 
 function SynthNoteOffAll() {
@@ -36,7 +34,7 @@ function SynthNoteOffAll() {
 }
 
 function SetSynthInstrument(Index, Instrument) {
-	Synth.Tracks[Track].Instrument = Instrument
+	Synth.Instrument[Track] = Instrument
 }
 
 function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
@@ -44,23 +42,31 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 	var NumTracks = Constants.NumTracks
 	var GateTransitionDuration = Synth.GateTransitionDuration
 
-	ProcessSynthEg(NumSamples)
-	ProcessSynthVco(NumSamples)
-	ProcessSynthVcf(NumSamples)
-
 	for (var i = 0; i < NumSamples; i++) {
 		OutputL[i + Offset] = 0
 		OutputR[i + Offset] = 0
 	}
 
 	for (var Track = 0; Track < NumTracks; Track++) {
-		var SynthTrack = Synth.Tracks[Track]
-		var Instrument = Instruments[SynthTrack.Instrument]
-		var Volume = Instrument.Volume
-		var Gate = SynthTrack.Gate
-		var TargetGate = SynthTrack.TargetGate
+		var Instrument = Instruments[Synth.Instrument[Track]]
+
+		ProcessSynthEg(Track, NumSamples)
+
+		SynthVco.Portamento[Track] = Instrument.VcoPortamento / 100
+		SynthVco.Vco2Pitch[Track] = Instrument.Vco2Pitch / 10
+		SynthVco.EgInt[Track] = Instrument.VcoEgInt / 100
+		ProcessSynthVco(Track, NumSamples)
+
+		ProcessSynthVcf(Track, NumSamples)
+	}
+
+	for (var Track = 0; Track < NumTracks; Track++) {
+		var Instrument = Instruments[Synth.Instrument[Track]]
+		var Volume = Instrument.Volume / 100
+		var Gate = Synth.Gate[Track]
+		var TargetGate = Synth.TargetGate[Track]
 		var GateDelta = 1 / GateTransitionDuration / SampleRate
-		var VcoOutput = SynthVco.Tracks[Track].Output
+		var VcoOutput = SynthVco.Output[Track]
 
 		for (var i = 0; i < NumSamples; i++) {
 			if (Gate > TargetGate) {
@@ -79,6 +85,6 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 			OutputR[i + Offset] += Sample
 		}
 
-		SynthTrack.Gate = Gate
+		Synth.Gate[Track] = Gate
 	}
 }

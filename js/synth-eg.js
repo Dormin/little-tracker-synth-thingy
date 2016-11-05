@@ -13,6 +13,6 @@ function InitSynthEg() {
 	}
 }
 
-function ProcessSynthEg(NumSamples) {
+function ProcessSynthEg(Track, NumSamples) {
 
 }

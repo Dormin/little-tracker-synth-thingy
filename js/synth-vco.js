@@ -1,34 +1,47 @@
 "use strict"
 
 var SynthVco = {
-	Tracks: []
+	Note: [],
+	Portamento: [],
+	Vco2Pitch: [],
+	EgInt: [],
+	Output: [],
+	Time: []
 }
 
 function InitSynthVco() {
-	for (var i = 0; i < Constants.NumTracks; i++) {
-		SynthVco.Tracks[i] = {
-			Note: 0,
-			Output: CreateBuffer(Audio.BufferSize),
-			Time: 0
-		}
+	for (var Track = 0; Track < Constants.NumTracks; Track++) {
+		SynthVco.Note[Track] = 0
+		SynthVco.Portamento[Track] = 0
+		SynthVco.Vco2Pitch[Track] = 0
+		SynthVco.EgInt[Track] = 0
+		SynthVco.Output[Track] = CreateBuffer(Audio.BufferSize),
+		SynthVco.Time[Track] = 0
 	}
 }
 
-function ProcessSynthVco(NumSamples) {
+function ProcessSynthVco(Track, NumSamples) {
 	var SampleRate = Audio.SampleRate
+	var Note = SynthVco.Note[Track]
+	var Portamento = SynthVco.Portamento[Track]
+	var Vco2Pitch = SynthVco.Vco2Pitch[Track]
+	var EgInt = SynthVco.EgInt[Track]
+	var Output = SynthVco.Output[Track]
+	var Time = SynthVco.Time[Track]
+	var Freq = 440 * Math.pow(2, Note / 12)
 
-	for (var Track = 0; Track < Constants.NumTracks; Track++) {
-		var VcoTrack = SynthVco.Tracks[Track]
-		var Note = VcoTrack.Note
-		var Output = VcoTrack.Output
-		var Time = VcoTrack.Time
-		var Freq = 440 * Math.pow(2, Note / 12)
-
-		for (var i = 0; i < NumSamples; i++) {
-			Output[i] = Math.sin(2 * Math.PI * Time)
-			Time += Freq / SampleRate
-		}
-
-		VcoTrack.Time = Time
+	for (var i = 0; i < NumSamples; i++) {
+		Output[i] = SawWave(Time)
+		Time += Freq / SampleRate
 	}
+
+	SynthVco.Time[Track] = Time
+}
+
+function SineWave(Time) {
+	return Math.sin(2 * Math.PI * Time)
+}
+
+function SawWave(Time) {
+	return 1 - 2 * (Time % 1)
 }

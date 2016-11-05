@@ -12,6 +12,6 @@ function InitSynthVcf() {
 	}
 }
 
-function ProcessSynthVcf(NumSamples) {
+function ProcessSynthVcf(Track, NumSamples) {
 
 }
