@@ -56,13 +56,14 @@ function HandlePatternEditorInput(Event, Key) {
 			ChangePatternEditorOctave(Octave)
 		} else if (KeyToNoteMap.hasOwnProperty(Key)) {
 			var Note = PatternEditor.CurrentOctave * 12 + KeyToNoteMap[Key]
-			InsertPatternEditorNote(Note)
+			var Retrigger = KeyIsHeld("Shift")
+			InsertPatternEditorNote(Note, Retrigger)
 			PatternEditor.CurrentKey = Key
-			SynthNoteOn(PatternEditor.WorkingTrack, Note)
+			SynthNoteOn(PatternEditor.WorkingTrack, Note, Retrigger)
 		} else if (Key === "Dash") {
-			InsertPatternEditorNote(Constants.NoteKeep)
+			InsertPatternEditorNote(Constants.NoteKeep, false)
 		} else if (Key === "Period") {
-			InsertPatternEditorNote(Constants.NoteCut)
+			InsertPatternEditorNote(Constants.NoteCut, false)
 		} else if (Key === "Insert") {
 			PushPatternEditorNotes()
 		} else if (Key === "Delete") {
@@ -100,9 +101,10 @@ function ChangePatternEditorOctave(Octave) {
 	}
 }
 
-function InsertPatternEditorNote(Note) {
+function InsertPatternEditorNote(Note, Retrigger) {
 	var Cell = GetPatternEditorSelectedCell()
 	Cell.Note = Note
+	Cell.Retrigger = Retrigger
 	MovePatternEditorCursorDown()
 	PatternEditor.NeedsToRedraw = true
 }
@@ -114,8 +116,11 @@ function PushPatternEditorNotes() {
 		var Cell1 = GetPatternEditorCell(Track, Step)
 		var Cell2 = GetPatternEditorCell(Track, Step - 1)
 		Cell1.Note = Cell2.Note
+		Cell1.Retrigger = Cell2.Retrigger
 	}
-	GetPatternEditorSelectedCell().Note = Constants.NoteKeep
+	var Cell = GetPatternEditorSelectedCell()
+	Cell.Note = Constants.NoteKeep
+	Cell.Retrigger = false
 	PatternEditor.NeedsToRedraw = true
 }
 
@@ -126,8 +131,11 @@ function DeletePatternEditorNote() {
 		var Cell1 = GetPatternEditorCell(Track, Step)
 		var Cell2 = GetPatternEditorCell(Track, Step + 1)
 		Cell1.Note = Cell2.Note
+		Cell1.Retrigger = Cell2.Retrigger
 	}
-	GetPatternEditorCell(Track, LastStep).Note = Constants.NoteKeep
+	var Cell = GetPatternEditorCell(Track, LastStep)
+	Cell.Note = Constants.NoteKeep
+	Cell.Retrigger = false
 	PatternEditor.NeedsToRedraw = true
 }
 
@@ -258,12 +266,15 @@ function DrawPatternEditorRow(Row, X, Y) {
 			DrawRect(X, Y, 3 * CharWidth, RowHeight)
 		}
 
-		DrawPatternEditorNote(Cell.Note, X, Y)
+		DrawPatternEditorCell(Cell, X, Y)
 		X += 6 * CharWidth
 	}
 }
 
-function DrawPatternEditorNote(Note, X, Y) {
+function DrawPatternEditorCell(Cell, X, Y) {
+	var Note = Cell.Note
+	var Retrigger = Cell.Retrigger
+
 	if (Note === Constants.NoteKeep) {
 		SetAlpha(0.25)
 		DrawString("---", X, Y)
@@ -275,7 +286,11 @@ function DrawPatternEditorNote(Note, X, Y) {
 		Note = (Note % 12 + 12) % 12
 		var NoteChar = [67, 67, 68, 68, 69, 70, 70, 71, 71, 65, 65, 66][Note]
 		var SharpChar = [45, 35, 45, 35, 45, 45, 35, 45, 35, 45, 35, 45][Note]
-		SetAlpha(1.0)
+		if (Retrigger) {
+			SetAlpha(0.5)
+		} else {
+			SetAlpha(1.0)
+		}
 		DrawChar(NoteChar, X, Y)
 		DrawChar(SharpChar, X + Ui.FontWidth, Y)
 		DrawDigit(Octave, X + 2 * Ui.FontWidth, Y)

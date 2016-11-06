@@ -20,7 +20,7 @@ function InitSong() {
 		for (var j = 0; j < Constants.NumTracks; j++) {
 			var Track = []
 			for (var k = 0; k < Constants.MaxPatternLength; k++) {
-				Track[k] = { Note: Constants.NoteKeep }
+				Track[k] = { Note: Constants.NoteKeep, Retrigger: false }
 			}
 			Tracks[j] = Track
 		}

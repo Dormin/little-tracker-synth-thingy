@@ -20,6 +20,10 @@ function InitInput() {
 	
 }
 
+function KeyIsHeld(Key) {
+	return Input.IsHeld[Key]
+}
+
 function StartInput(OnInput) {
 	Input.OnInput = OnInput
 	window.onkeydown = OnKeyDown
@@ -94,6 +98,7 @@ function KeyCodeToString(KeyCode) {
 	}
 
 	switch (KeyCode) {
+		case 16: return "Shift"
 		case 32: return "Spacebar"
 		case 33: return "Page Up"
 		case 34: return "Page Down"

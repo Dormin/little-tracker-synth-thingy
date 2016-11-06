@@ -37,9 +37,10 @@ function HandleSongPlayerStep() {
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
 		var Cell = GetSongPatternCell(Track, Song.PatternStep)
 		var Note = Cell.Note
+		var Retrigger = Cell.Retrigger
 
 		if (Note >= 0) {
-			SynthNoteOn(Track, Note)
+			SynthNoteOn(Track, Note, Retrigger)
 		} else if (Note === Constants.NoteCut) {
 			SynthNoteOff(Track)
 		}

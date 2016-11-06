@@ -18,7 +18,7 @@ function InitSynth() {
 	}
 }
 
-function SynthNoteOn(Track, Note) {
+function SynthNoteOn(Track, Note, Retrigger) {
 	Synth.TargetGate[Track] = 1
 	SynthVco.Note[Track] = Note - 57
 }
