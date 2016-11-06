@@ -8,13 +8,12 @@ var App = {
 
 function InitApp() {
 	InitUi()
-	InitInstruments()
-	InitInstrumentEditor()
-	InitPatternEditor()
-	InitSequenceEditor()
 	InitSong()
 	InitSongPlayer()
 	InitSynth()
+	InitInstrumentEditor()
+	InitPatternEditor()
+	InitSequenceEditor()
 }
 
 function ProcessApp(OutputL, OutputR, NumSamples) {

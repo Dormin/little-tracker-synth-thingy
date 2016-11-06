@@ -5,6 +5,7 @@ var Song = {
 	SequenceLength: 1,
 	Sequence: [],
 	Patterns: [],
+	Instruments: [],
 	SequenceStep: 0,
 	PatternStep: 0
 }
@@ -26,6 +27,23 @@ function InitSong() {
 		Song.Patterns[i] = {
 			Length: Constants.MaxPatternLength,
 			Tracks: Tracks
+		}
+	}
+
+	for (var i = 0; i < Constants.NumInstruments; i++) {
+		Song.Instruments[i] = {
+			Volume: 100,
+			Pan: 0,
+			EgDecay: 0,
+			VcoPortamento: 0,
+			Vco2Pitch: 0,
+			VcoEgInt: 0,
+			VcfCutoff: 100,
+			VcfResonance: 0,
+			VcfEgInt: 0,
+			DelayTime: 0,
+			DelayInt: 0,
+			DelaySync: true
 		}
 	}
 }

@@ -5,6 +5,7 @@ var Constants = {
 	NumPatterns: 26, // A-Z
 	MaxPatternLength: 64,
 	MaxSequenceLength: 64,
+	NumInstruments: 26, // A-Z
 	NoteKeep: -1,
 	NoteCut: -2
 }

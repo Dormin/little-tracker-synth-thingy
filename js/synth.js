@@ -48,7 +48,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 	}
 
 	for (var Track = 0; Track < NumTracks; Track++) {
-		var Instrument = Instruments[Synth.Instrument[Track]]
+		var Instrument = Song.Instruments[Synth.Instrument[Track]]
 
 		ProcessSynthEg(Track, NumSamples)
 
@@ -61,7 +61,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 	}
 
 	for (var Track = 0; Track < NumTracks; Track++) {
-		var Instrument = Instruments[Synth.Instrument[Track]]
+		var Instrument = Song.Instruments[Synth.Instrument[Track]]
 		var Volume = Instrument.Volume / 100
 		var Gate = Synth.Gate[Track]
 		var TargetGate = Synth.TargetGate[Track]
