@@ -60,6 +60,9 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		SynthVco.EgInt[Track] = Instrument.VcoEgInt / 100
 		ProcessSynthVco(Track, NumSamples)
 
+		SynthVcf.Cutoff[Track] = Instrument.VcfCutoff / 100
+		SynthVcf.Resonance[Track] = Instrument.VcfResonance / 100
+		SynthVcf.EgInt[Track] = Instrument.VcfEgInt / 100
 		ProcessSynthVcf(Track, NumSamples)
 	}
 
@@ -69,7 +72,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		var Gate = Synth.Gate[Track]
 		var TargetGate = Synth.TargetGate[Track]
 		var GateDelta = 1 / GateTransitionDuration / SampleRate
-		var VcoOutput = SynthVco.Output[Track]
+		var VcfOutput = SynthVcf.Output[Track]
 
 		for (var i = 0; i < NumSamples; i++) {
 			if (Gate > TargetGate) {
@@ -83,7 +86,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 					Gate = 1
 				}
 			}
-			var Sample = Gate * Volume * VcoOutput[i] / NumTracks
+			var Sample = Gate * Volume * VcfOutput[i] / NumTracks
 			OutputL[i + Offset] += Sample
 			OutputR[i + Offset] += Sample
 		}

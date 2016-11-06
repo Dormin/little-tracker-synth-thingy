@@ -24,9 +24,9 @@ function DrawInstrumentEditor() {
 	DrawPanel(X, Y, Width, Height)
 	DrawString("INSTRUMENT A:DEFAULT", X + 3, Y + 3)
 	DrawHSeparator(X + 3, Y + 11, Width - 6)
-	DrawString("VOL 100 PAN +00 DEC 000 DLY 030", X + 3, Y + 15)
-	DrawString("POR 010 DET +01 INT 000 INT 000", X + 3, Y + 21)
-	DrawString("CUT 100 RES 000 INT 000 SYN ON ", X + 3, Y + 27)
+	DrawString("VOL 100 PAN +00 DEC 005 DLY 030", X + 3, Y + 15)
+	DrawString("POR 000 DET +00 INT 050 INT 000", X + 3, Y + 21)
+	DrawString("CUT 001 RES 050 INT 025 SYN ON ", X + 3, Y + 27)
 	DrawVSeparator(X + 24 * 6 - 1, Y + 15, Height - 18)
 
 	InstrumentEditor.NeedsToRedraw = false
