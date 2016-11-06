@@ -19,8 +19,10 @@ function InitSynth() {
 }
 
 function SynthNoteOn(Track, Note, Retrigger) {
+	Note -= 57
 	Synth.TargetGate[Track] = 1
-	SynthVcoNoteOn(Track, Note - 57, Retrigger)
+	SynthEgNoteOn(Track, Note, Retrigger)
+	SynthVcoNoteOn(Track, Note, Retrigger)
 }
 
 function SynthNoteOff(Track) {
@@ -50,6 +52,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 	for (var Track = 0; Track < NumTracks; Track++) {
 		var Instrument = Song.Instruments[Synth.Instrument[Track]]
 
+		SynthEg.Duration[Track] = Instrument.EgDecay / 100
 		ProcessSynthEg(Track, NumSamples)
 
 		SynthVco.PortaDuration[Track] = Instrument.VcoPortamento / 100

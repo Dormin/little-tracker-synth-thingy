@@ -34,10 +34,10 @@ function InitSong() {
 		Song.Instruments[i] = {
 			Volume: 100,
 			Pan: 0,
-			EgDecay: 0,
+			EgDecay: 25,
 			VcoPortamento: 10,
 			Vco2Detune: 1,
-			VcoEgInt: 0,
+			VcoEgInt: 100,
 			VcfCutoff: 100,
 			VcfResonance: 0,
 			VcfEgInt: 0,

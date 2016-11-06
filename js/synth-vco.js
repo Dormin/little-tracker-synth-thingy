@@ -45,12 +45,15 @@ function ProcessSynthVco(Track, NumSamples) {
 	var Output = SynthVco.Output[Track]
 	var Vco1Time = SynthVco.Vco1Time[Track]
 	var Vco2Time = SynthVco.Vco2Time[Track]
+	var EgOutput = SynthEg.Output[Track]
 	
 	for (var i = 0; i < NumSamples; i++) {
 		var DeltaNote = TargetNote - Note
 		var DeltaPorta = PortaDuration - PortaTime
-		var Vco1Freq = 440 * Math.pow(2, Note / 12)
-		var Vco2Freq = 440 * Math.pow(2, (Note + Vco2Detune) / 12)
+		var Vco1Note = Note + 48 * EgInt * EgOutput[i]
+		var Vco2Note = Vco1Note + Vco2Detune
+		var Vco1Freq = 440 * Math.pow(2, Vco1Note / 12)
+		var Vco2Freq = 440 * Math.pow(2, Vco2Note / 12)
 		Output[i] = (SawWave(Vco1Time) + SawWave(Vco2Time)) / 2
 		if (DeltaPorta > 0) {
 			Note += DeltaNote / DeltaPorta / SampleRate
