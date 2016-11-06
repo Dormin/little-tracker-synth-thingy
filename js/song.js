@@ -35,7 +35,7 @@ function InitSong() {
 			Volume: 100,
 			Pan: 0,
 			EgDecay: 0,
-			VcoPortamento: 0,
+			VcoPortamento: 10,
 			Vco2Pitch: 0,
 			VcoEgInt: 0,
 			VcfCutoff: 100,

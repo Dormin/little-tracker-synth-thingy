@@ -2,9 +2,9 @@
 
 var Synth = {
 	GateTransitionDuration: 0.003,
-	Instrument: [],
 	Gate: [],
-	TargetGate: []
+	TargetGate: [],
+	Instrument: [],
 }
 
 function InitSynth() {
@@ -12,15 +12,15 @@ function InitSynth() {
 	InitSynthVco()
 	InitSynthVcf()
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
-		Synth.Instrument[Track] = 0
 		Synth.Gate[Track] = 0
 		Synth.TargetGate[Track] = 0
+		Synth.Instrument[Track] = 0
 	}
 }
 
 function SynthNoteOn(Track, Note, Retrigger) {
 	Synth.TargetGate[Track] = 1
-	SynthVco.Note[Track] = Note - 57
+	SynthVcoNoteOn(Track, Note - 57, Retrigger)
 }
 
 function SynthNoteOff(Track) {
@@ -33,7 +33,7 @@ function SynthNoteOffAll() {
 	}
 }
 
-function SetSynthInstrument(Index, Instrument) {
+function SetSynthInstrument(Track, Instrument) {
 	Synth.Instrument[Track] = Instrument
 }
 
@@ -52,7 +52,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 
 		ProcessSynthEg(Track, NumSamples)
 
-		SynthVco.Portamento[Track] = Instrument.VcoPortamento / 100
+		SynthVco.PortaDuration[Track] = Instrument.VcoPortamento / 100
 		SynthVco.Vco2Pitch[Track] = Instrument.Vco2Pitch / 10
 		SynthVco.EgInt[Track] = Instrument.VcoEgInt / 100
 		ProcessSynthVco(Track, NumSamples)

@@ -56,7 +56,7 @@ function HandlePatternEditorInput(Event, Key) {
 			ChangePatternEditorOctave(Octave)
 		} else if (KeyToNoteMap.hasOwnProperty(Key)) {
 			var Note = PatternEditor.CurrentOctave * 12 + KeyToNoteMap[Key]
-			var Retrigger = KeyIsHeld("Shift")
+			var Retrigger = !KeyIsHeld("Shift")
 			InsertPatternEditorNote(Note, Retrigger)
 			PatternEditor.CurrentKey = Key
 			SynthNoteOn(PatternEditor.WorkingTrack, Note, Retrigger)
@@ -287,9 +287,9 @@ function DrawPatternEditorCell(Cell, X, Y) {
 		var NoteChar = [67, 67, 68, 68, 69, 70, 70, 71, 71, 65, 65, 66][Note]
 		var SharpChar = [45, 35, 45, 35, 45, 45, 35, 45, 35, 45, 35, 45][Note]
 		if (Retrigger) {
-			SetAlpha(0.5)
-		} else {
 			SetAlpha(1.0)
+		} else {
+			SetAlpha(0.5)
 		}
 		DrawChar(NoteChar, X, Y)
 		DrawChar(SharpChar, X + Ui.FontWidth, Y)
