@@ -25,7 +25,7 @@ function DrawInstrumentEditor() {
 	DrawString("INSTRUMENT A:DEFAULT", X + 3, Y + 3)
 	DrawHSeparator(X + 3, Y + 11, Width - 6)
 	DrawString("VOL 100 PAN +00 DEC 000 DLY 030", X + 3, Y + 15)
-	DrawString("POR 010 DET +00 INT 000 INT 000", X + 3, Y + 21)
+	DrawString("POR 010 DET +01 INT 000 INT 000", X + 3, Y + 21)
 	DrawString("CUT 100 RES 000 INT 000 SYN ON ", X + 3, Y + 27)
 	DrawVSeparator(X + 24 * 6 - 1, Y + 15, Height - 18)
 

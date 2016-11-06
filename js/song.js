@@ -36,7 +36,7 @@ function InitSong() {
 			Pan: 0,
 			EgDecay: 0,
 			VcoPortamento: 10,
-			Vco2Pitch: 0,
+			Vco2Detune: 1,
 			VcoEgInt: 0,
 			VcfCutoff: 100,
 			VcfResonance: 0,

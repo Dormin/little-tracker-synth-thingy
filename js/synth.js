@@ -53,7 +53,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		ProcessSynthEg(Track, NumSamples)
 
 		SynthVco.PortaDuration[Track] = Instrument.VcoPortamento / 100
-		SynthVco.Vco2Pitch[Track] = Instrument.Vco2Pitch / 10
+		SynthVco.Vco2Detune[Track] = Instrument.Vco2Detune / 10
 		SynthVco.EgInt[Track] = Instrument.VcoEgInt / 100
 		ProcessSynthVco(Track, NumSamples)
 

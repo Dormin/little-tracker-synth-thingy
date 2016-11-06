@@ -5,10 +5,11 @@ var SynthVco = {
 	TargetNote: [],
 	PortaDuration: [],
 	PortaTime: [],
-	Vco2Pitch: [],
+	Vco2Detune: [],
 	EgInt: [],
 	Output: [],
-	Time: []
+	Vco1Time: [],
+	Vco2Time: []
 }
 
 function InitSynthVco() {
@@ -17,10 +18,11 @@ function InitSynthVco() {
 		SynthVco.TargetNote[Track] = 0
 		SynthVco.PortaDuration[Track] = 0
 		SynthVco.PortaTime[Track] = 0
-		SynthVco.Vco2Pitch[Track] = 0
+		SynthVco.Vco2Detune[Track] = 0
 		SynthVco.EgInt[Track] = 0
 		SynthVco.Output[Track] = CreateBuffer(Audio.BufferSize),
-		SynthVco.Time[Track] = 0
+		SynthVco.Vco1Time[Track] = 0
+		SynthVco.Vco2Time[Track] = 0
 	}
 }
 
@@ -38,28 +40,32 @@ function ProcessSynthVco(Track, NumSamples) {
 	var TargetNote = SynthVco.TargetNote[Track]
 	var PortaDuration = SynthVco.PortaDuration[Track]
 	var PortaTime = SynthVco.PortaTime[Track]
-	var Vco2Pitch = SynthVco.Vco2Pitch[Track]
+	var Vco2Detune = SynthVco.Vco2Detune[Track]
 	var EgInt = SynthVco.EgInt[Track]
 	var Output = SynthVco.Output[Track]
-	var Time = SynthVco.Time[Track]
+	var Vco1Time = SynthVco.Vco1Time[Track]
+	var Vco2Time = SynthVco.Vco2Time[Track]
 	
 	for (var i = 0; i < NumSamples; i++) {
 		var DeltaNote = TargetNote - Note
 		var DeltaPorta = PortaDuration - PortaTime
-		var Freq = 440 * Math.pow(2, Note / 12)
-		Output[i] = SawWave(Time)
+		var Vco1Freq = 440 * Math.pow(2, Note / 12)
+		var Vco2Freq = 440 * Math.pow(2, (Note + Vco2Detune) / 12)
+		Output[i] = (SawWave(Vco1Time) + SawWave(Vco2Time)) / 2
 		if (DeltaPorta > 0) {
 			Note += DeltaNote / DeltaPorta / SampleRate
 		} else {
 			Note = TargetNote
 		}
 		PortaTime += 1 / SampleRate
-		Time += Freq / SampleRate
+		Vco1Time += Vco1Freq / SampleRate
+		Vco2Time += Vco2Freq / SampleRate
 	}
 
 	SynthVco.Note[Track] = Note
 	SynthVco.PortaTime[Track] = PortaTime
-	SynthVco.Time[Track] = Time
+	SynthVco.Vco1Time[Track] = Vco1Time
+	SynthVco.Vco2Time[Track] = Vco2Time
 }
 
 function SineWave(Time) {
