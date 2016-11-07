@@ -32,6 +32,7 @@ function InitSong() {
 
 	for (var i = 0; i < Constants.NumInstruments; i++) {
 		Song.Instruments[i] = {
+			Name: "DEFAULT",
 			Volume: 100,
 			Pan: 0,
 			EgDecay: 100,

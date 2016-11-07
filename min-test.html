@@ -4,7 +4,7 @@
 		<title>Test</title>
 	</head>
 	<body style="padding:16px;background-color:#2d2e39">
-		<canvas id="view" width="192" height="144" style="width:384px;height:288px;display:block;margin:auto;image-rendering:pixelated;box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.5)"></canvas>
+		<canvas id="view" width="192" height="144" style="width:576px;height:432px;display:block;margin:auto;image-rendering:pixelated;box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.5)"></canvas>
 		<script src="js/app.js"></script>
 		<script src="js/audio.js"></script>
 		<script src="js/buffer.js"></script>
@@ -30,6 +30,7 @@
 			InitApp()
 
 			SetSynthInstrument(0, 0)
+			Song.Instruments[0].Name = "KICK"
 			Song.Instruments[0].Volume = 100
 			Song.Instruments[0].Pan = 0
 			Song.Instruments[0].EgDecay = 5
@@ -41,6 +42,7 @@
 			Song.Instruments[0].VcfEgInt = 20
 
 			SetSynthInstrument(1, 1)
+			Song.Instruments[1].Name = "BASS"
 			Song.Instruments[1].Volume = 100
 			Song.Instruments[1].Pan = 0
 			Song.Instruments[1].EgDecay = 10
@@ -52,6 +54,7 @@
 			Song.Instruments[1].VcfEgInt = 20
 
 			SetSynthInstrument(2, 2)
+			Song.Instruments[2].Name = "5TH"
 			Song.Instruments[2].Volume = 100
 			Song.Instruments[2].Pan = 0
 			Song.Instruments[2].EgDecay = 5
@@ -63,6 +66,7 @@
 			Song.Instruments[2].VcfEgInt = 50
 
 			SetSynthInstrument(3, 3)
+			Song.Instruments[3].Name = "LEAD"
 			Song.Instruments[3].Volume = 50
 			Song.Instruments[3].Pan = 0
 			Song.Instruments[3].EgDecay = 10
