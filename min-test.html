@@ -29,6 +29,50 @@
 			InitInput()
 			InitApp()
 
+			SetSynthInstrument(0, 0)
+			Song.Instruments[0].Volume = 100
+			Song.Instruments[0].Pan = 0
+			Song.Instruments[0].EgDecay = 5
+			Song.Instruments[0].VcoPortamento = 0
+			Song.Instruments[0].Vco2Detune = 0
+			Song.Instruments[0].VcoEgInt = 50
+			Song.Instruments[0].VcfCutoff = 1
+			Song.Instruments[0].VcfResonance = 80
+			Song.Instruments[0].VcfEgInt = 20
+
+			SetSynthInstrument(1, 1)
+			Song.Instruments[1].Volume = 100
+			Song.Instruments[1].Pan = 0
+			Song.Instruments[1].EgDecay = 10
+			Song.Instruments[1].VcoPortamento = 15
+			Song.Instruments[1].Vco2Detune = 0
+			Song.Instruments[1].VcoEgInt = 0
+			Song.Instruments[1].VcfCutoff = 5
+			Song.Instruments[1].VcfResonance = 50
+			Song.Instruments[1].VcfEgInt = 20
+
+			SetSynthInstrument(2, 2)
+			Song.Instruments[2].Volume = 100
+			Song.Instruments[2].Pan = 0
+			Song.Instruments[2].EgDecay = 5
+			Song.Instruments[2].VcoPortamento = 0
+			Song.Instruments[2].Vco2Detune = 70
+			Song.Instruments[2].VcoEgInt = 0
+			Song.Instruments[2].VcfCutoff = 15
+			Song.Instruments[2].VcfResonance = 50
+			Song.Instruments[2].VcfEgInt = 50
+
+			SetSynthInstrument(3, 3)
+			Song.Instruments[3].Volume = 50
+			Song.Instruments[3].Pan = 0
+			Song.Instruments[3].EgDecay = 10
+			Song.Instruments[3].VcoPortamento = 15
+			Song.Instruments[3].Vco2Detune = 1
+			Song.Instruments[3].VcoEgInt = 0
+			Song.Instruments[3].VcfCutoff = 100
+			Song.Instruments[3].VcfResonance = 0
+			Song.Instruments[3].VcfEgInt = 0
+
 			WaitForResources(OnResourcesLoaded)
 
 			function OnResourcesLoaded() {
