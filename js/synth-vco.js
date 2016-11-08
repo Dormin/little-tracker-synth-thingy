@@ -54,15 +54,16 @@ function ProcessSynthVco(Track, NumSamples) {
 		var Vco2Note = Vco1Note + Vco2Detune
 		var Vco1Freq = 440 * Math.pow(2, Vco1Note / 12)
 		var Vco2Freq = 440 * Math.pow(2, Vco2Note / 12)
-		Output[i] = (SawWave(Vco1Time) + SawWave(Vco2Time)) / 2
+
+		Output[i] = (Wave(Vco1Time) + Wave(Vco2Time)) / 2
 		if (DeltaPorta > 0) {
 			Note += DeltaNote / DeltaPorta / SampleRate
 		} else {
 			Note = TargetNote
 		}
 		PortaTime += 1 / SampleRate
-		Vco1Time += Vco1Freq / SampleRate
-		Vco2Time += Vco2Freq / SampleRate
+		Vco1Time = (Vco1Time + Vco1Freq / SampleRate) % 1
+		Vco2Time = (Vco2Time + Vco2Freq / SampleRate) % 1
 	}
 
 	SynthVco.Note[Track] = Note
@@ -71,10 +72,22 @@ function ProcessSynthVco(Track, NumSamples) {
 	SynthVco.Vco2Time[Track] = Vco2Time
 }
 
+function Wave(Time) {
+	return SawWaveC(Time)
+}
+
 function SineWave(Time) {
 	return Math.sin(2 * Math.PI * Time)
 }
 
-function SawWave(Time) {
+function SawWaveA(Time) {
 	return 1 - 2 * (Time % 1)
+}
+
+function SawWaveB(Time) {
+	return 2 * SineWave(0.25 * (Time % 1)) - 1
+}
+
+function SawWaveC(Time) {
+	return -SineWave(Math.sqrt(1 - Math.pow(Time, 4)))
 }
