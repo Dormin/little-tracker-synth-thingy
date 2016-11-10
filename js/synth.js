@@ -72,7 +72,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		var Gate = Synth.Gate[Track]
 		var TargetGate = Synth.TargetGate[Track]
 		var GateDelta = 1 / GateTransitionDuration / SampleRate
-		var VcfOutput = SynthVcf.Output[Track]
+		var Input = SynthVcf.Output[Track]
 
 		for (var i = 0; i < NumSamples; i++) {
 			if (Gate > TargetGate) {
@@ -86,7 +86,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 					Gate = 1
 				}
 			}
-			var Sample = Gate * Volume * VcfOutput[i] / NumTracks
+			var Sample = Gate * Volume * Input[i] / NumTracks
 			OutputL[i + Offset] += Sample
 			OutputR[i + Offset] += Sample
 		}

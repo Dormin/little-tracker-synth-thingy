@@ -83,7 +83,7 @@ function SineWave(X, Dx) {
 }
 
 function SawWaveA(X, Dx) {
-	return 1 - 2 * (X % 1)
+	return 2 * (X % 1) - 1
 }
 
 function SawWaveB(X, Dx) {
@@ -99,7 +99,7 @@ function SawWaveD(X, Dx) {
 }
 
 function SawWaveE(X, Dx) {
-	var Dx2 = Math.max(0, X % 1 + Dx - 1)
+	var Dx2 = X % 1 + Dx - 1
 	if (Dx2 > 0) {
 		var Dx1 = Dx - Dx2
 		var R = 0
