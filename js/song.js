@@ -43,8 +43,7 @@ function InitSong() {
 			VcfResonance: 0,
 			VcfEgInt: 0,
 			DelayTime: 0,
-			DelayInt: 0,
-			DelaySync: true
+			DelayInt: 0
 		}
 	}
 }

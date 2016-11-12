@@ -1,9 +1,6 @@
 "use strict"
 
 var Synth = {
-	GateTransitionDuration: 0.003,
-	Gate: [],
-	TargetGate: [],
 	Instrument: [],
 }
 
@@ -11,22 +8,23 @@ function InitSynth() {
 	InitSynthEg()
 	InitSynthVco()
 	InitSynthVcf()
+	InitSynthAmp()
+	InitSynthDelay()
+
 	for (var Track = 0; Track < Constants.NumTracks; Track++) {
-		Synth.Gate[Track] = 0
-		Synth.TargetGate[Track] = 0
 		Synth.Instrument[Track] = 0
 	}
 }
 
 function SynthNoteOn(Track, Note, Retrigger) {
 	Note -= 57
-	Synth.TargetGate[Track] = 1
 	SynthEgNoteOn(Track, Note, Retrigger)
 	SynthVcoNoteOn(Track, Note, Retrigger)
+	SynthAmpNoteOn(Track, Note, Retrigger)
 }
 
 function SynthNoteOff(Track) {
-	Synth.TargetGate[Track] = 0
+	SynthAmpNoteOff(Track)
 }
 
 function SynthNoteOffAll() {
@@ -42,7 +40,6 @@ function SetSynthInstrument(Track, Instrument) {
 function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 	var SampleRate = Audio.SampleRate
 	var NumTracks = Constants.NumTracks
-	var GateTransitionDuration = Synth.GateTransitionDuration
 
 	for (var i = 0; i < NumSamples; i++) {
 		OutputL[i + Offset] = 0
@@ -64,33 +61,22 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		SynthVcf.Resonance[Track] = Instrument.VcfResonance / 100
 		SynthVcf.EgInt[Track] = Instrument.VcfEgInt / 100
 		ProcessSynthVcf(Track, NumSamples)
+
+		SynthAmp.Volume[Track] = Instrument.Volume / 100
+		ProcessSynthAmp(Track, NumSamples)
+
+		SynthDelay.Intensity[Track] = Instrument.DelayInt / 100
+		ProcessSynthDelay(Track, NumSamples)
 	}
 
 	for (var Track = 0; Track < NumTracks; Track++) {
 		var Instrument = Song.Instruments[Synth.Instrument[Track]]
-		var Volume = Instrument.Volume / 100
-		var Gate = Synth.Gate[Track]
-		var TargetGate = Synth.TargetGate[Track]
-		var GateDelta = 1 / GateTransitionDuration / SampleRate
-		var Input = SynthVcf.Output[Track]
+		var Input = SynthDelay.Output[Track]
 
 		for (var i = 0; i < NumSamples; i++) {
-			if (Gate > TargetGate) {
-				Gate -= GateDelta
-				if (Gate < 0) {
-					Gate = 0
-				}
-			} else if (Gate < TargetGate) {
-				Gate += GateDelta
-				if (Gate > 1) {
-					Gate = 1
-				}
-			}
-			var Sample = Gate * Volume * Input[i] / NumTracks
+			var Sample = Input[i] / NumTracks
 			OutputL[i + Offset] += Sample
 			OutputR[i + Offset] += Sample
 		}
-
-		Synth.Gate[Track] = Gate
 	}
 }

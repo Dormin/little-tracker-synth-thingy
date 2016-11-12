@@ -20,7 +20,7 @@ function InitSynthVco() {
 		SynthVco.PortaTime[Track] = 0
 		SynthVco.Vco2Detune[Track] = 0
 		SynthVco.EgInt[Track] = 0
-		SynthVco.Output[Track] = CreateBuffer(Audio.BufferSize),
+		SynthVco.Output[Track] = CreateBuffer(Audio.BufferSize)
 		SynthVco.Vco1Time[Track] = 0
 		SynthVco.Vco2Time[Track] = 0
 	}
@@ -36,6 +36,7 @@ function SynthVcoNoteOn(Track, Note, Retrigger) {
 
 function ProcessSynthVco(Track, NumSamples) {
 	var SampleRate = Audio.SampleRate
+	var EgOutput = SynthEg.Output[Track]
 	var Note = SynthVco.Note[Track]
 	var TargetNote = SynthVco.TargetNote[Track]
 	var PortaDuration = SynthVco.PortaDuration[Track]
@@ -45,7 +46,6 @@ function ProcessSynthVco(Track, NumSamples) {
 	var Output = SynthVco.Output[Track]
 	var Vco1Time = SynthVco.Vco1Time[Track]
 	var Vco2Time = SynthVco.Vco2Time[Track]
-	var EgOutput = SynthEg.Output[Track]
 	
 	for (var i = 0; i < NumSamples; i++) {
 		var DeltaNote = TargetNote - Note
@@ -99,14 +99,10 @@ function SawWaveD(X, Dx) {
 }
 
 function SawWaveE(X, Dx) {
-	var Dx2 = X % 1 + Dx - 1
-	if (Dx2 > 0) {
-		var Dx1 = Dx - Dx2
-		var R = 0
-		R += SawWaveA(X + Dx1 / 2) * Dx1
-		R += SawWaveA(0 + Dx2 / 2) * Dx2
-		return R / Dx
-	} else {
-		return SawWaveA(X + Dx / 2)
-	}
+	var Dx2 = Math.max(0, X % 1 + Dx - 1)
+	var Dx1 = Dx - Dx2
+	var R = 0
+	R += SawWaveA(X + Dx1 / 2) * Dx1
+	R += SawWaveA(0 + Dx2 / 2) * Dx2
+	return R / Dx
 }

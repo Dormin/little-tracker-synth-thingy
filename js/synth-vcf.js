@@ -34,6 +34,8 @@ function InitSynthVcf() {
 
 function ProcessSynthVcf(Track, NumSamples) {
 	var SampleRate = Audio.SampleRate
+	var EgOutput = SynthEg.Output[Track]
+	var VcoOutput = SynthVco.Output[Track]
 	var Cutoff = SynthVcf.Cutoff[Track]
 	var Resonance = SynthVcf.Resonance[Track]
 	var EgInt = SynthVcf.EgInt[Track]
@@ -46,8 +48,6 @@ function ProcessSynthVcf(Track, NumSamples) {
 	var Out2 = SynthVcf.Out2[Track]
 	var Out3 = SynthVcf.Out3[Track]
 	var Out4 = SynthVcf.Out4[Track]
-	var EgOutput = SynthEg.Output[Track]
-	var VcoOutput = SynthVco.Output[Track]
 
 	for (var i = 0; i < NumSamples; i++) {
 		var F = (Cutoff + EgInt * EgOutput[i]) * 1.16

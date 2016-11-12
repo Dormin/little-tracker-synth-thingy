@@ -18,6 +18,8 @@
 		<script src="js/song.js"></script>
 		<script src="js/song-player.js"></script>
 		<script src="js/synth.js"></script>
+		<script src="js/synth-amp.js"></script>
+		<script src="js/synth-delay.js"></script>
 		<script src="js/synth-eg.js"></script>
 		<script src="js/synth-vcf.js"></script>
 		<script src="js/synth-vco.js"></script>
@@ -40,6 +42,7 @@
 			Song.Instruments[0].VcfCutoff = 1
 			Song.Instruments[0].VcfResonance = 80
 			Song.Instruments[0].VcfEgInt = 20
+			Song.Instruments[0].DelayInt = 0
 
 			SetSynthInstrument(1, 1)
 			Song.Instruments[1].Name = "BASS"
@@ -52,6 +55,7 @@
 			Song.Instruments[1].VcfCutoff = 5
 			Song.Instruments[1].VcfResonance = 50
 			Song.Instruments[1].VcfEgInt = 20
+			Song.Instruments[1].DelayInt = 0
 
 			SetSynthInstrument(2, 2)
 			Song.Instruments[2].Name = "5TH"
@@ -64,6 +68,7 @@
 			Song.Instruments[2].VcfCutoff = 15
 			Song.Instruments[2].VcfResonance = 50
 			Song.Instruments[2].VcfEgInt = 50
+			Song.Instruments[2].DelayInt = 50
 
 			SetSynthInstrument(3, 3)
 			Song.Instruments[3].Name = "LEAD"
@@ -76,6 +81,7 @@
 			Song.Instruments[3].VcfCutoff = 100
 			Song.Instruments[3].VcfResonance = 0
 			Song.Instruments[3].VcfEgInt = 0
+			Song.Instruments[3].DelayInt = 50
 
 			WaitForResources(OnResourcesLoaded)
 
