@@ -1,7 +1,7 @@
 "use strict"
 
 var Synth = {
-	Instrument: [],
+	Instrument: []
 }
 
 function InitSynth() {
@@ -63,6 +63,7 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 		ProcessSynthVcf(Track, NumSamples)
 
 		SynthAmp.Volume[Track] = Instrument.Volume / 100
+		SynthAmp.Pan[Track] = Instrument.Pan / 100
 		ProcessSynthAmp(Track, NumSamples)
 
 		SynthDelay.Intensity[Track] = Instrument.DelayInt / 100
@@ -71,12 +72,12 @@ function ProcessSynth(OutputL, OutputR, NumSamples, Offset) {
 
 	for (var Track = 0; Track < NumTracks; Track++) {
 		var Instrument = Song.Instruments[Synth.Instrument[Track]]
-		var Input = SynthDelay.Output[Track]
+		var InputL = SynthDelay.OutputL[Track]
+		var InputR = SynthDelay.OutputR[Track]
 
 		for (var i = 0; i < NumSamples; i++) {
-			var Sample = Input[i] / NumTracks
-			OutputL[i + Offset] += Sample
-			OutputR[i + Offset] += Sample
+			OutputL[i + Offset] += InputL[i] / NumTracks
+			OutputR[i + Offset] += InputR[i] / NumTracks
 		}
 	}
 }

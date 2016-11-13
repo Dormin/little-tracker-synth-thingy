@@ -5,7 +5,9 @@ var SynthAmp = {
 	Gate: [],
 	TargetGate: [],
 	Volume: [],
-	Output: []
+	Pan: [],
+	OutputL: [],
+	OutputR: []
 }
 
 function InitSynthAmp() {
@@ -13,7 +15,9 @@ function InitSynthAmp() {
 		SynthAmp.Gate[Track] = 0
 		SynthAmp.TargetGate[Track] = 0
 		SynthAmp.Volume[Track] = 0
-		SynthAmp.Output[Track] = CreateBuffer(Audio.BufferSize)
+		SynthAmp.Pan[Track] = 0
+		SynthAmp.OutputL[Track] = CreateBuffer(Audio.BufferSize)
+		SynthAmp.OutputR[Track] = CreateBuffer(Audio.BufferSize)
 	}
 }
 
@@ -32,10 +36,20 @@ function ProcessSynthAmp(Track, NumSamples) {
 	var Gate = SynthAmp.Gate[Track]
 	var TargetGate = SynthAmp.TargetGate[Track]
 	var Volume = SynthAmp.Volume[Track]
-	var Output = SynthAmp.Output[Track]
+	var Pan = SynthAmp.Pan[Track]
+	var OutputL = SynthAmp.OutputL[Track]
+	var OutputR = SynthAmp.OutputR[Track]
 	var GateDelta = 1 / GateTransitionDuration / SampleRate
+	var Theta = Math.PI / 2 * Pan
+	var CosTheta = Math.cos(Theta)
+	var SinTheta = Math.sin(Theta)
+	var K = Math.sqrt(2) / 2
+	var AmpL = Volume * K * (CosTheta - SinTheta)
+	var AmpR = Volume * K * (CosTheta + SinTheta)
 
 	for (var i = 0; i < NumSamples; i++) {
+		var Input = VcfOutput[i]
+
 		if (Gate > TargetGate) {
 			Gate -= GateDelta
 			if (Gate < 0) {
@@ -48,7 +62,8 @@ function ProcessSynthAmp(Track, NumSamples) {
 			}
 		}
 
-		Output[i] = Gate * Volume * VcfOutput[i]
+		OutputL[i] = Gate * AmpL * Input
+		OutputR[i] = Gate * AmpR * Input
 	}
 
 	SynthAmp.Gate[Track] = Gate
